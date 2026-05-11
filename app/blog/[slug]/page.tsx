@@ -169,70 +169,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             </div>
 
             {/* Article body */}
-            <div className="prose-boxing">
-              <h2 id="introduction">Introduction</h2>
-              <p>
-                Finding the right pair of boxing gloves is one of the most important decisions you&apos;ll make as a fighter. Whether you&apos;re a beginner just stepping into the gym or a seasoned professional preparing for your next camp, the gloves you wear directly impact your hand protection, punching technique, and overall training quality.
-              </p>
-              <p>
-                In this comprehensive guide, we&apos;ve tested over 30 pairs of boxing gloves across every price range and use case. Our team of coaches and fighters has spent hundreds of hours evaluating padding quality, wrist support, durability, and overall value to bring you the definitive list of the best boxing gloves available.
-              </p>
+            <div 
+              className="prose-boxing"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
 
-              <AdPlaceholder location="In-article (top)" className="h-[90px] my-8" />
-
-              <h2 id="key-features">Key Features to Consider</h2>
-              <p>Before diving into our recommendations, it&apos;s important to understand what makes a great boxing glove. Here are the key factors we evaluate:</p>
-              <ul>
-                <li><strong>Padding Quality:</strong> Multi-layer foam vs. single-layer. Look for gloves with IMF (Injection Molded Foam) or multi-layer padding for superior shock absorption.</li>
-                <li><strong>Wrist Support:</strong> A secure wrist closure prevents hyperextension. Look for gloves with long cuffs and quality hook-and-loop or lace closures.</li>
-                <li><strong>Leather Quality:</strong> Genuine leather outlasts synthetic materials by years. Premium gloves use cowhide or goatskin leather.</li>
-                <li><strong>Weight/Oz:</strong> 14-16oz for sparring, 10-12oz for bag work, 8-10oz for competition. Heavier gloves provide more protection.</li>
-                <li><strong>Fit and Comfort:</strong> The glove should feel like a natural extension of your hand. Thumb placement and hand compartment size matter.</li>
-              </ul>
-
-              <h2 id="top-picks">Our Top Picks</h2>
-              <p>After extensive testing, these are the boxing gloves that stood out from the rest. We&apos;ve categorized them by use case and budget to help you find the perfect match.</p>
-
-              <NewsletterSignup variant="inline" />
-
-              <h3 id="budget-option">Best Budget Option</h3>
-              <p>
-                For fighters on a budget, the Ringside IMF Tech gloves offer exceptional value. At under $100, you get multi-layer foam padding, genuine leather construction, and solid wrist support that punches well above its price class.
-              </p>
-
-              <h3 id="premium-option">Best Premium Option</h3>
-              <p>
-                The Winning MS-500 remains the gold standard of boxing gloves. While the price is steep, the unparalleled hand protection, custom-feel padding, and legendary durability make these a lifetime investment for serious fighters.
-              </p>
-
-              <AffiliateBlock
-                title="Recommended Boxing Gloves"
-                description="Our top picks based on extensive testing and real-world use."
-                products={gloveProducts}
-              />
-
-              <h2 id="how-to-choose">How to Choose the Right Pair</h2>
-              <p>Choosing boxing gloves comes down to three main questions:</p>
-              <ol>
-                <li><strong>What will you use them for?</strong> Sparring, bag work, or competition each require different glove weights and padding types.</li>
-                <li><strong>How often do you train?</strong> Frequent training (3+ days/week) demands higher-quality gloves that can withstand daily use.</li>
-                <li><strong>What&apos;s your budget?</strong> While we recommend investing in the best you can afford, excellent options exist at every price point.</li>
-              </ol>
-
-              <AdPlaceholder location="In-article (mid)" className="h-[90px] my-8" />
-
-              <h2 id="faq">Frequently Asked Questions</h2>
-              <div className="space-y-4 my-6">
-                {faqs.map((faq, i) => (
-                  <div key={i} className="p-4 rounded-lg bg-secondary/30 border border-border/30">
-                    <h3 className="text-base font-semibold mb-2">{faq.question}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
-                  </div>
-                ))}
-              </div>
-
-              <NewsletterSignup variant="compact" />
-            </div>
 
             {/* Related Posts */}
             {relatedArticles.length > 0 && (
