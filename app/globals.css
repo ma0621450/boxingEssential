@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 72% 51%;
+    --chart-1: 0 72% 51%;
+    --chart-2: 0 0% 60%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 200 60% 50%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .prose-boxing {
+    @apply text-[1.125rem] leading-[1.8] text-foreground/90;
+  }
+  .prose-boxing h2 {
+    @apply text-2xl font-bold text-foreground mt-12 mb-4 border-l-4 border-primary pl-4;
+  }
+  .prose-boxing h3 {
+    @apply text-xl font-semibold text-foreground mt-8 mb-3;
+  }
+  .prose-boxing p {
+    @apply mb-6;
+  }
+  .prose-boxing ul {
+    @apply list-disc pl-6 mb-6 space-y-2;
+  }
+  .prose-boxing ol {
+    @apply list-decimal pl-6 mb-6 space-y-2;
+  }
+  .prose-boxing blockquote {
+    @apply border-l-4 border-primary/50 pl-6 italic text-muted-foreground my-8;
+  }
+  .prose-boxing a {
+    @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
+  }
+  .prose-boxing strong {
+    @apply text-foreground font-semibold;
+  }
+  .prose-boxing img {
+    @apply rounded-lg my-8;
+  }
+}
