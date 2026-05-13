@@ -8,6 +8,9 @@ import { HomeUpcomingFights } from "@/components/home-upcoming-fights";
 import { HomeUpcomingEvents } from "@/components/home-upcoming-events";
 import { getHomeLiveData } from "@/lib/home-live-data";
 
+/** Vercel: build often runs without secrets; static HTML would hide API sections forever. */
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const { fights, events, headlines } = await getHomeLiveData();
 

@@ -12,12 +12,21 @@ export type HomeLiveData = {
   headlines: string[];
 };
 
+function isRenderableFight(f: ScheduledFight): boolean {
+  return Boolean(
+    f.fighters?.fighter_1?.name?.trim() &&
+      f.fighters?.fighter_2?.name?.trim()
+  );
+}
+
 export async function getHomeLiveData(): Promise<HomeLiveData> {
-  const [fights, events, headlines] = await Promise.all([
+  const [rawFights, events, headlines] = await Promise.all([
     fetchUpcomingFights(),
     fetchUpcomingEvents(),
     fetchSportsHeadlines(),
   ]);
+
+  const fights = rawFights.filter(isRenderableFight);
 
   return { fights, events, headlines };
 }
