@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, Zap, Target, Shield, BookOpen } from "lucide-react";
-import { articles, categories, products } from "@/lib/data";
-import { ArticleCard } from "@/components/article-card";
+import { ArrowRight, Zap, Target } from "lucide-react";
+import { categories } from "@/lib/data";
 import { CategoryCard } from "@/components/category-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { AffiliateProductCard } from "@/components/affiliate-product-card";
+import { BoxingHeadlinesMarquee } from "@/components/boxing-headlines-marquee";
+import { HomeUpcomingFights } from "@/components/home-upcoming-fights";
+import { HomeUpcomingEvents } from "@/components/home-upcoming-events";
+import { getHomeLiveData } from "@/lib/home-live-data";
 
-export default function HomePage() {
-  const featured = articles.filter((a) => a.featured);
-  const latest = articles.slice(0, 6);
-  const gearProducts = products.filter((p) => p.category === "Gloves");
+export default async function HomePage() {
+  const { fights, events, headlines } = await getHomeLiveData();
 
   return (
     <>
@@ -38,7 +38,7 @@ export default function HomePage() {
                 href="/blog"
                 className="h-11 px-6 inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
               >
-                Read Articles
+                Read Blogs
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
@@ -53,11 +53,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Articles */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      {fights.length > 0 ? <HomeUpcomingFights fights={fights} /> : null}
+
+      {headlines.length > 0 ? <BoxingHeadlinesMarquee headlines={headlines} /> : null}
+
+      {events.length > 0 ? <HomeUpcomingEvents events={events} /> : null}
+
+      {/* Featured Blogs */}
+      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold">Featured Articles</h2>
+            <h2 className="text-2xl font-bold">Featured Blogs</h2>
             <p className="text-sm text-muted-foreground mt-1">Our most popular and in-depth content</p>
           </div>
           <Link
@@ -73,7 +79,7 @@ export default function HomePage() {
             <ArticleCard key={article.slug} article={article} featured={i === 0} />
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
@@ -88,11 +94,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Latest Articles */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
+      {/* Latest Blogs */}
+      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold">Latest Articles</h2>
+            <h2 className="text-2xl font-bold">Latest Blogs</h2>
             <p className="text-sm text-muted-foreground mt-1">Fresh content, updated regularly</p>
           </div>
           <Link
@@ -108,10 +114,10 @@ export default function HomePage() {
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Affiliate Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
+      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <div className="flex items-center gap-2 mb-2">
           <Shield className="h-5 w-5 text-primary" />
           <h2 className="text-2xl font-bold">Recommended Boxing Gloves</h2>
@@ -127,7 +133,7 @@ export default function HomePage() {
         <p className="text-[10px] text-muted-foreground mt-4">
           Boxing Essential is reader-supported. We may earn a commission on purchases through our links.
         </p>
-      </section>
+      </section> */}
 
       {/* Newsletter */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
@@ -135,7 +141,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick Links */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
+      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             href="/beginner-guides"
@@ -174,7 +180,7 @@ export default function HomePage() {
             </div>
           </Link>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }

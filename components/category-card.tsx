@@ -28,7 +28,7 @@ export function CategoryCard({ category }: { category: Category }) {
         {category.description}
       </p>
       <span className="text-xs text-muted-foreground">
-        {category.articleCount} articles
+        {category.articleCount} Blogs
       </span>
     </Link>
   );

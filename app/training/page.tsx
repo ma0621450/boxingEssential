@@ -1,4 +1,4 @@
-import { articles, getCategoryBySlug, getArticlesByCategory } from "@/lib/data";
+import { Blogs, getCategoryBySlug, getArticlesByCategory } from "@/lib/data";
 import { ArticleCard } from "@/components/article-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -39,7 +39,7 @@ export default function TrainingPage() {
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-muted-foreground">No training articles yet. Check back soon!</p>
+          <p className="text-muted-foreground">No training Blogs yet. Check back soon!</p>
         </div>
       )}
 

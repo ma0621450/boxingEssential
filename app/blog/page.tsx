@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { articles, categories } from "@/lib/data";
+import { Blogs, categories } from "@/lib/data";
 import { ArticleCard } from "@/components/article-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 
@@ -15,7 +15,7 @@ export default function BlogPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
-    let result = [...articles];
+    let result = [...Blogs];
 
     if (search) {
       const q = search.toLowerCase();
@@ -42,7 +42,7 @@ export default function BlogPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">
-          All Articles
+          All Blogs
         </h1>
         <p className="text-muted-foreground">
           Expert boxing content covering training, nutrition, gear, and strategy.
@@ -56,7 +56,7 @@ export default function BlogPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search articles..."
+              placeholder="Search Blogs..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full h-10 pl-10 pr-4 rounded-md border border-input bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -72,11 +72,10 @@ export default function BlogPage() {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`h-10 px-4 rounded-md border text-sm font-medium transition-colors flex items-center gap-2 ${
-              showFilters
+            className={`h-10 px-4 rounded-md border text-sm font-medium transition-colors flex items-center gap-2 ${showFilters
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-background border-input hover:bg-secondary"
-            }`}
+              }`}
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span className="hidden sm:inline">Filters</span>
@@ -88,11 +87,10 @@ export default function BlogPage() {
             <span className="text-sm font-medium text-muted-foreground">Category:</span>
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                !selectedCategory
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!selectedCategory
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-              }`}
+                }`}
             >
               All
             </button>
@@ -102,11 +100,10 @@ export default function BlogPage() {
                 onClick={() =>
                   setSelectedCategory(selectedCategory === cat.slug ? null : cat.slug)
                 }
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  selectedCategory === cat.slug
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${selectedCategory === cat.slug
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
+                  }`}
               >
                 {cat.name}
               </button>
@@ -116,21 +113,19 @@ export default function BlogPage() {
               <span className="text-sm font-medium text-muted-foreground">Sort:</span>
               <button
                 onClick={() => setSort("latest")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  sort === "latest"
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${sort === "latest"
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
+                  }`}
               >
                 Latest
               </button>
               <button
                 onClick={() => setSort("popular")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  sort === "popular"
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${sort === "popular"
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
+                  }`}
               >
                 Popular
               </button>
@@ -153,7 +148,7 @@ export default function BlogPage() {
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-muted-foreground mb-2">No articles found.</p>
+          <p className="text-muted-foreground mb-2">No Blogs found.</p>
           <button
             onClick={() => {
               setSearch("");

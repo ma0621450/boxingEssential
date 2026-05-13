@@ -3,12 +3,12 @@ import Image from "next/image";
 import { Clock } from "lucide-react";
 import type { Article } from "@/lib/data";
 
-export function RelatedPosts({ articles }: { articles: Article[] }) {
+export function RelatedPosts({ Blogs }: { Blogs: Article[] }) {
   return (
     <section className="mt-12 pt-8 border-t border-border/50">
-      <h2 className="text-xl font-bold mb-6">Related Articles</h2>
+      <h2 className="text-xl font-bold mb-6">Related Blogs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {articles.map((article) => (
+        {Blogs.map((article) => (
           <Link key={article.slug} href={`/blog/${article.slug}`} className="group block">
             <article className="overflow-hidden rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all duration-300 h-full flex flex-col">
               <div className="relative aspect-[16/10] overflow-hidden">

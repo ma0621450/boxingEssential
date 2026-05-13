@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, User, ChevronRight } from "lucide-react";
-import { articles, products, getArticleBySlug } from "@/lib/data";
+import { Blogs, products, getArticleBySlug } from "@/lib/data";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TableOfContents } from "@/components/table-of-contents";
 import { AffiliateBlock } from "@/components/affiliate-product-card";
@@ -40,7 +40,7 @@ const faqs = [
 ];
 
 export async function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
+  return Blogs.map((article) => ({ slug: article.slug }));
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -65,7 +65,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const article = getArticleBySlug(params.slug);
   if (!article) notFound();
 
-  const relatedArticles = articles
+  const relatedArticles = Blogs
     .filter((a) => a.category.slug === article.category.slug && a.slug !== article.slug)
     .slice(0, 3);
   const gloveProducts = products.filter((p) => p.category === "Gloves");
@@ -114,7 +114,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <Breadcrumbs
           items={[
-            { label: "Articles", href: "/blog" },
+            { label: "Blogs", href: "/blog" },
             { label: article.category.name, href: `/${article.category.slug}` },
             { label: article.title },
           ]}
@@ -169,7 +169,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             </div>
 
             {/* Article body */}
-            <div 
+            <div
               className="prose-boxing"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
@@ -177,7 +177,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
             {/* Related Posts */}
             {relatedArticles.length > 0 && (
-              <RelatedPosts articles={relatedArticles} />
+              <RelatedPosts Blogs={relatedArticles} />
             )}
           </article>
 

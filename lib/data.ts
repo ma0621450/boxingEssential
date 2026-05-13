@@ -61,7 +61,7 @@ export const categories: Category[] = [
   },
 ];
 
-export const articles: Article[] = [
+export const Blogs: Article[] = [
   {
     slug: "best-boxing-gloves-2025",
     title: "The 10 Best Boxing Gloves in 2025: A Complete Buying Guide",
@@ -298,15 +298,15 @@ export const products: Product[] = [
 ];
 
 export function getArticleBySlug(slug: string): Article | undefined {
-  return articles.find((a) => a.slug === slug);
+  return Blogs.find((a) => a.slug === slug);
 }
 
 export function getArticlesByCategory(categorySlug: string): Article[] {
-  return articles.filter((a) => a.category.slug === categorySlug);
+  return Blogs.filter((a) => a.category.slug === categorySlug);
 }
 
 export function getFeaturedArticles(): Article[] {
-  return articles.filter((a) => a.featured);
+  return Blogs.filter((a) => a.featured);
 }
 
 export function getCategoryBySlug(slug: string): Category | undefined {

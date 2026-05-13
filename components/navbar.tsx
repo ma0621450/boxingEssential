@@ -7,11 +7,9 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Articles" },
+  { href: "/shop", label: "Shop" },
   { href: "/training", label: "Training" },
-  { href: "/nutrition", label: "Nutrition" },
-  { href: "/gear-reviews", label: "Gear Reviews" },
-  { href: "/beginner-guides", label: "Beginner Guides" },
+  { href: "/blogs", label: "Blogs" },
   { href: "/about", label: "About" },
 ];
 
@@ -60,7 +58,7 @@ export function Navbar() {
             <Link
               href="/blog"
               className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-              aria-label="Search articles"
+              aria-label="Search Blogs"
             >
               <Search className="h-4 w-4" />
             </Link>
