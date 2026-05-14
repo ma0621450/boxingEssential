@@ -1,32 +1,26 @@
 import { fetchSportsHeadlines } from "@/lib/currents-api";
 import {
-  fetchUpcomingEvents,
-  fetchUpcomingFights,
-  type ScheduledEvent,
-  type ScheduledFight,
-} from "@/lib/boxing-data-api";
+  fetchScheduledBouts,
+  fetchChampions,
+  type Bout,
+  type Boxer,
+} from "@/lib/openboxing-api";
 
 export type HomeLiveData = {
-  fights: ScheduledFight[];
-  events: ScheduledEvent[];
+  bouts: Bout[];
+  champions: Boxer[];
   headlines: string[];
 };
 
-function isRenderableFight(f: ScheduledFight): boolean {
-  return Boolean(
-    f.fighters?.fighter_1?.name?.trim() &&
-      f.fighters?.fighter_2?.name?.trim()
-  );
-}
-
 export async function getHomeLiveData(): Promise<HomeLiveData> {
-  const [rawFights, events, headlines] = await Promise.all([
-    fetchUpcomingFights(),
-    fetchUpcomingEvents(),
+  const [bouts, rawChampions, headlines] = await Promise.all([
+    fetchScheduledBouts(),
+    fetchChampions(),
     fetchSportsHeadlines(),
   ]);
 
-  const fights = rawFights.filter(isRenderableFight);
+  // Just grab a handful of random champions for the homepage or the first few
+  const champions = rawChampions.slice(0, 10);
 
-  return { fights, events, headlines };
+  return { bouts, champions, headlines };
 }

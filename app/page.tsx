@@ -1,18 +1,24 @@
 import Link from "next/link";
 import { ArrowRight, Zap, Target } from "lucide-react";
-import { categories } from "@/lib/data";
+import { categories, Blogs } from "@/lib/data";
 import { CategoryCard } from "@/components/category-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { BoxingHeadlinesMarquee } from "@/components/boxing-headlines-marquee";
-import { HomeUpcomingFights } from "@/components/home-upcoming-fights";
-import { HomeUpcomingEvents } from "@/components/home-upcoming-events";
+import { UpcomingBouts } from "@/components/upcoming-bouts";
+import { CurrentChampions } from "@/components/current-champions";
+import { ArticleCard } from "@/components/article-card";
 import { getHomeLiveData } from "@/lib/home-live-data";
 
 /** Vercel: build often runs without secrets; static HTML would hide API sections forever. */
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { fights, events, headlines } = await getHomeLiveData();
+  const { bouts, champions, headlines } = await getHomeLiveData();
+  
+  // Get latest 3 blogs
+  const latest = [...Blogs]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
   return (
     <>
@@ -56,33 +62,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {fights.length > 0 ? <HomeUpcomingFights fights={fights} /> : null}
+      {/* OpenBoxing Scheduled Bouts */}
+      {bouts && bouts.length > 0 ? <UpcomingBouts bouts={bouts} /> : null}
 
-      {headlines.length > 0 ? <BoxingHeadlinesMarquee headlines={headlines} /> : null}
+      {/* Boxing Headlines Marquee (Currents API) */}
+      {headlines && headlines.length > 0 ? <BoxingHeadlinesMarquee headlines={headlines} /> : null}
 
-      {events.length > 0 ? <HomeUpcomingEvents events={events} /> : null}
-
-      {/* Featured Blogs */}
-      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Featured Blogs</h2>
-            <p className="text-sm text-muted-foreground mt-1">Our most popular and in-depth content</p>
-          </div>
-          <Link
-            href="/blog"
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-          >
-            View all
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {featured.map((article, i) => (
-            <ArticleCard key={article.slug} article={article} featured={i === 0} />
-          ))}
-        </div>
-      </section> */}
+      {/* OpenBoxing Current Champions */}
+      {champions && champions.length > 0 ? <CurrentChampions champions={champions} /> : null}
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
@@ -98,7 +85,7 @@ export default async function HomePage() {
       </section>
 
       {/* Latest Blogs */}
-      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-bold">Latest Blogs</h2>
@@ -117,73 +104,12 @@ export default async function HomePage() {
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
-      </section> */}
-
-      {/* Affiliate Section */}
-      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
-        <div className="flex items-center gap-2 mb-2">
-          <Shield className="h-5 w-5 text-primary" />
-          <h2 className="text-2xl font-bold">Recommended Boxing Gloves</h2>
-        </div>
-        <p className="text-sm text-muted-foreground mb-6">
-          Our top picks for training gloves, tested and reviewed by our team.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {gearProducts.map((product) => (
-            <AffiliateProductCard key={product.id} product={product} />
-          ))}
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-4">
-          Boxing Essential is reader-supported. We may earn a commission on purchases through our links.
-        </p>
-      </section> */}
+      </section>
 
       {/* Newsletter */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <NewsletterSignup />
       </section>
-
-      {/* Quick Links */}
-      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
-            href="/beginner-guides"
-            className="group flex items-center gap-4 p-5 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all"
-          >
-            <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-              <BookOpen className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold group-hover:text-primary transition-colors">New to Boxing?</h3>
-              <p className="text-xs text-muted-foreground">Start with our beginner guides</p>
-            </div>
-          </Link>
-          <Link
-            href="/gear-reviews"
-            className="group flex items-center gap-4 p-5 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all"
-          >
-            <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-              <Shield className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold group-hover:text-primary transition-colors">Gear Reviews</h3>
-              <p className="text-xs text-muted-foreground">Honest equipment recommendations</p>
-            </div>
-          </Link>
-          <Link
-            href="/training"
-            className="group flex items-center gap-4 p-5 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all"
-          >
-            <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-              <Target className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold group-hover:text-primary transition-colors">Training Plans</h3>
-              <p className="text-xs text-muted-foreground">Structured workout programs</p>
-            </div>
-          </Link>
-        </div>
-      </section> */}
     </>
   );
 }

@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, User, ChevronRight } from "lucide-react";
-import { Blogs, products, getArticleBySlug } from "@/lib/data";
+import { Calendar, Clock, User } from "lucide-react";
+import { Blogs, getArticleBySlug } from "@/lib/data";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TableOfContents } from "@/components/table-of-contents";
-import { AffiliateBlock } from "@/components/affiliate-product-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { RelatedPosts } from "@/components/related-posts";
 import { AdPlaceholder } from "@/components/ad-placeholder";
@@ -43,8 +42,13 @@ export async function generateStaticParams() {
   return Blogs.map((article) => ({ slug: article.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const article = getArticleBySlug(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
   if (!article) return { title: "Article Not Found" };
 
   return {
@@ -61,14 +65,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const article = getArticleBySlug(params.slug);
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
   if (!article) notFound();
 
   const relatedArticles = Blogs
     .filter((a) => a.category.slug === article.category.slug && a.slug !== article.slug)
     .slice(0, 3);
-  const gloveProducts = products.filter((p) => p.category === "Gloves");
 
   return (
     <>
