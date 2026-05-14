@@ -1,7 +1,7 @@
-import { Bout } from "@/lib/openboxing-api";
+import { OddsEvent } from "@/lib/odds-api";
 import { Calendar, Swords } from "lucide-react";
 
-export function UpcomingBouts({ bouts }: { bouts: Bout[] }) {
+export function UpcomingBouts({ bouts }: { bouts: OddsEvent[] }) {
   if (!bouts || bouts.length === 0) return null;
 
   return (
@@ -11,7 +11,7 @@ export function UpcomingBouts({ bouts }: { bouts: Bout[] }) {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
           <div>
             <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-              <span className="text-red-600">Upcoming</span> Bouts
+              <span className="text-red-600">Upcoming</span> Fights
             </h2>
             <p className="text-zinc-400 mt-2 font-medium">The most anticipated clashes in the squared circle.</p>
           </div>
@@ -22,43 +22,33 @@ export function UpcomingBouts({ bouts }: { bouts: Bout[] }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {bouts.slice(0, 6).map((bout) => (
-            <div key={bout.boutId} className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-6 hover:border-red-600/50 transition-all duration-300 relative group overflow-hidden">
+            <div key={bout.id} className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-6 hover:border-red-600/50 transition-all duration-300 relative group overflow-hidden">
               <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">
-                {new Date(bout.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {new Date(bout.commence_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
               </div>
               
               <div className="text-zinc-400 text-sm font-semibold mb-6 flex items-center gap-2 mt-2 uppercase tracking-wider">
                 <Swords className="w-4 h-4 text-red-500" />
-                {bout.weight.class} &bull; {bout.scheduledRounds} Rounds
+                Main Event Fight
               </div>
               
               <div className="flex justify-between items-center gap-4">
                 <div className="flex-1 text-right">
                   <p className="text-2xl md:text-3xl font-black font-sans uppercase tracking-tight text-white group-hover:text-red-500 transition-colors">
-                    {bout.boxers.boxerA.name.last}
+                    {bout.home_team.split(' ').slice(-1)[0]}
                   </p>
-                  <p className="text-sm text-zinc-500 uppercase tracking-widest">{bout.boxers.boxerA.name.first}</p>
+                  <p className="text-sm text-zinc-500 uppercase tracking-widest">{bout.home_team.split(' ').slice(0, -1).join(' ')}</p>
                 </div>
                 <div className="text-xl md:text-2xl font-black text-red-600 italic px-4 drop-shadow-[0_0_8px_rgba(220,38,38,0.5)]">
                   VS
                 </div>
                 <div className="flex-1 text-left">
                   <p className="text-2xl md:text-3xl font-black font-sans uppercase tracking-tight text-white group-hover:text-red-500 transition-colors">
-                    {bout.boxers.boxerB.name.last}
+                    {bout.away_team.split(' ').slice(-1)[0]}
                   </p>
-                  <p className="text-sm text-zinc-500 uppercase tracking-widest">{bout.boxers.boxerB.name.first}</p>
+                  <p className="text-sm text-zinc-500 uppercase tracking-widest">{bout.away_team.split(' ').slice(0, -1).join(' ')}</p>
                 </div>
               </div>
-              
-              {bout.titles && bout.titles.length > 0 && (
-                <div className="mt-8 pt-4 border-t border-zinc-800/50 flex flex-wrap gap-2 items-center justify-center">
-                  {bout.titles.map((title, i) => (
-                    <span key={i} className="text-[10px] font-bold bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded-full border border-zinc-700 uppercase tracking-wider">
-                      {title.org.name.short} Title
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </div>

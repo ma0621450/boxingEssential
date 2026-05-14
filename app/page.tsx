@@ -5,7 +5,6 @@ import { CategoryCard } from "@/components/category-card";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { BoxingHeadlinesMarquee } from "@/components/boxing-headlines-marquee";
 import { UpcomingBouts } from "@/components/upcoming-bouts";
-import { CurrentChampions } from "@/components/current-champions";
 import { ArticleCard } from "@/components/article-card";
 import { getHomeLiveData } from "@/lib/home-live-data";
 
@@ -13,7 +12,7 @@ import { getHomeLiveData } from "@/lib/home-live-data";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { bouts, champions, headlines } = await getHomeLiveData();
+  const { bouts, headlines } = await getHomeLiveData();
   
   // Get latest 3 blogs
   const latest = [...Blogs]
@@ -62,14 +61,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* OpenBoxing Scheduled Bouts */}
+      {/* The Odds API Scheduled Bouts */}
       {bouts && bouts.length > 0 ? <UpcomingBouts bouts={bouts} /> : null}
 
       {/* Boxing Headlines Marquee (Currents API) */}
       {headlines && headlines.length > 0 ? <BoxingHeadlinesMarquee headlines={headlines} /> : null}
-
-      {/* OpenBoxing Current Champions */}
-      {champions && champions.length > 0 ? <CurrentChampions champions={champions} /> : null}
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">

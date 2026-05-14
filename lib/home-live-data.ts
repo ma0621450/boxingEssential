@@ -1,26 +1,16 @@
 import { fetchSportsHeadlines } from "@/lib/currents-api";
-import {
-  fetchScheduledBouts,
-  fetchChampions,
-  type Bout,
-  type Boxer,
-} from "@/lib/openboxing-api";
+import { fetchUpcomingFights, type OddsEvent } from "@/lib/odds-api";
 
 export type HomeLiveData = {
-  bouts: Bout[];
-  champions: Boxer[];
+  bouts: OddsEvent[];
   headlines: string[];
 };
 
 export async function getHomeLiveData(): Promise<HomeLiveData> {
-  const [bouts, rawChampions, headlines] = await Promise.all([
-    fetchScheduledBouts(),
-    fetchChampions(),
+  const [bouts, headlines] = await Promise.all([
+    fetchUpcomingFights(),
     fetchSportsHeadlines(),
   ]);
 
-  // Just grab a handful of random champions for the homepage or the first few
-  const champions = rawChampions.slice(0, 10);
-
-  return { bouts, champions, headlines };
+  return { bouts, headlines };
 }
