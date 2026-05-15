@@ -32,7 +32,7 @@ export function TableOfContents({ items }: { items: TOCItem[] }) {
   }, [items]);
 
   return (
-    <nav className="sticky top-24" aria-label="Table of contents">
+    <nav className="" aria-label="Table of contents">
       <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">
         On This Page
       </h4>

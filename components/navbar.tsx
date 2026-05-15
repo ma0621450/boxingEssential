@@ -4,9 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logo from "@/public/logo.png"
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/news", label: "News" },
   { href: "/shop", label: "Shop" },
   { href: "/training", label: "Training" },
   { href: "/blog", label: "Blog" },
@@ -29,12 +32,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-8 w-8 rounded-sm bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-black text-sm">BE</span>
-            </div>
-            <span className="text-lg font-bold tracking-tight">
-              Boxing<span className="text-primary">Essential</span>
-            </span>
+            <Image src={logo} alt="Logo" width={70} height={70} priority={true} />
           </Link>
 
           {/* Desktop nav */}
@@ -63,10 +61,10 @@ export function Navbar() {
               <Search className="h-4 w-4" />
             </Link>
             <Link
-              href="/contact"
+              href="/contact-us"
               className="h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Subscribe
+              Help Desk
             </Link>
           </div>
 
@@ -96,11 +94,11 @@ export function Navbar() {
               </Link>
             ))}
             <Link
-              href="/contact"
+              href="/contact-us"
               onClick={() => setMobileOpen(false)}
               className="mt-2 h-10 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Subscribe
+              Help Desk
             </Link>
           </nav>
         </div>

@@ -29,10 +29,10 @@ export function ArticleCard({ article, featured = false }: { article: Article; f
                   <Calendar className="h-3 w-3" />
                   {new Date(article.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
-                <span className="flex items-center gap-1">
+                {/* <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {article.readTime}
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
@@ -65,10 +65,10 @@ export function ArticleCard({ article, featured = false }: { article: Article; f
           </p>
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/30">
             <span>{article.author}</span>
-            <span className="flex items-center gap-1">
+            {/* <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {article.readTime}
-            </span>
+            </span> */}
           </div>
         </div>
       </article>

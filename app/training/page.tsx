@@ -1,6 +1,5 @@
 import { Blogs, getCategoryBySlug, getArticlesByCategory } from "@/lib/data";
 import { ArticleCard } from "@/components/article-card";
-import { NewsletterSignup } from "@/components/newsletter-signup";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ArrowRight, Dumbbell } from "lucide-react";
 import { TrainingRequestForm } from "@/components/training-request-form";
@@ -73,9 +72,6 @@ export default function TrainingPage() {
         </div>
       )}
 
-      <div className="mt-16">
-        <NewsletterSignup />
-      </div>
     </div>
   );
 }

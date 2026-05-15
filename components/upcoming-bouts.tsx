@@ -1,6 +1,8 @@
 import { OddsEvent } from "@/lib/odds-api";
 import { Calendar, Swords } from "lucide-react";
 
+import { LocalTime } from "./local-time";
+
 export function UpcomingBouts({ bouts }: { bouts: OddsEvent[] }) {
   if (!bouts || bouts.length === 0) return null;
 
@@ -24,7 +26,7 @@ export function UpcomingBouts({ bouts }: { bouts: OddsEvent[] }) {
           {bouts.slice(0, 6).map((bout) => (
             <div key={bout.id} className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-6 hover:border-red-600/50 transition-all duration-300 relative group overflow-hidden">
               <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">
-                {new Date(bout.commence_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                <LocalTime isoString={bout.commence_time} />
               </div>
               
               <div className="text-zinc-400 text-sm font-semibold mb-6 flex items-center gap-2 mt-2 uppercase tracking-wider">

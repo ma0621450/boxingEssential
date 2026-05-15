@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Blogs, categories } from "@/lib/data";
 import { ArticleCard } from "@/components/article-card";
-import { NewsletterSignup } from "@/components/newsletter-signup";
 
 type SortOption = "latest" | "popular";
 
@@ -14,8 +13,10 @@ export default function BlogPage() {
   const [sort, setSort] = useState<SortOption>("latest");
   const [showFilters, setShowFilters] = useState(false);
 
+  const blogCategories = useMemo(() => categories.filter(c => c.slug !== "news"), []);
+
   const filtered = useMemo(() => {
-    let result = [...Blogs];
+    let result = Blogs.filter(a => a.category.slug !== "news");
 
     if (search) {
       const q = search.toLowerCase();
@@ -32,6 +33,8 @@ export default function BlogPage() {
 
     if (sort === "popular") {
       result = result.sort((a, b) => (a.featured ? -1 : b.featured ? 1 : 0));
+    } else {
+      result = result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }
 
     return result;
@@ -94,7 +97,7 @@ export default function BlogPage() {
             >
               All
             </button>
-            {categories.map((cat) => (
+            {blogCategories.map((cat) => (
               <button
                 key={cat.slug}
                 onClick={() =>
@@ -161,10 +164,6 @@ export default function BlogPage() {
         </div>
       )}
 
-      {/* Newsletter */}
-      <div className="mt-16">
-        <NewsletterSignup />
-      </div>
     </div>
   );
 }

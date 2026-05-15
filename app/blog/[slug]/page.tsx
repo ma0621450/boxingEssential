@@ -5,9 +5,9 @@ import { Calendar, Clock, User } from "lucide-react";
 import { Blogs, getArticleBySlug } from "@/lib/data";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TableOfContents } from "@/components/table-of-contents";
-import { NewsletterSignup } from "@/components/newsletter-signup";
 import { RelatedPosts } from "@/components/related-posts";
 import { AdPlaceholder } from "@/components/ad-placeholder";
+import { SocialShare } from "@/components/social-share";
 
 const tocItems = [
   { id: "introduction", text: "Introduction", level: 2 },
@@ -78,6 +78,10 @@ export default async function BlogPostPage({
     .filter((a) => a.category.slug === article.category.slug && a.slug !== article.slug)
     .slice(0, 3);
 
+  const isNews = article.category.slug === "news";
+  const parentLabel = isNews ? "News" : "Blogs";
+  const parentHref = isNews ? "/news" : "/blog";
+
   return (
     <>
       <script
@@ -122,8 +126,8 @@ export default async function BlogPostPage({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <Breadcrumbs
           items={[
-            { label: "Blogs", href: "/blog" },
-            { label: article.category.name, href: `/${article.category.slug}` },
+            { label: parentLabel, href: parentHref },
+            { label: article.category.name, href: isNews ? "/news" : `/${article.category.slug}` },
             { label: article.title },
           ]}
         />
@@ -135,7 +139,7 @@ export default async function BlogPostPage({
             <header className="mb-8">
               <div className="flex items-center gap-2 mb-4">
                 <Link
-                  href={`/${article.category.slug}`}
+                  href={isNews ? "/news" : `/${article.category.slug}`}
                   className="px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
                 >
                   {article.category.name}
@@ -157,10 +161,10 @@ export default async function BlogPostPage({
                     year: "numeric",
                   })}
                 </span>
-                <span className="flex items-center gap-1.5">
+                {/* <span className="flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5" />
                   {article.readTime}
-                </span>
+                </span> */}
               </div>
             </header>
 
@@ -182,6 +186,12 @@ export default async function BlogPostPage({
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
+            <SocialShare
+              url={`https://boxingessential.com/blog/${article.slug}`}
+              title={article.title}
+              image={article.featuredImage}
+            />
+
 
             {/* Related Posts */}
             {relatedArticles.length > 0 && (
@@ -191,12 +201,14 @@ export default async function BlogPostPage({
 
           {/* Sidebar */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6">
-              <TableOfContents items={tocItems} />
+            <div className="sticky top-28 space-y-8 pb-10">
+              <div className="bg-secondary/10 rounded-2xl p-6 border border-border/50">
+                <TableOfContents items={tocItems} />
+              </div>
 
-              <AdPlaceholder location="Sidebar" className="h-[250px]" />
-
-              <NewsletterSignup variant="compact" />
+              <div className="rounded-2xl overflow-hidden border border-border/50">
+                <AdPlaceholder location="Sidebar" className="h-[250px]" />
+              </div>
             </div>
           </aside>
         </div>

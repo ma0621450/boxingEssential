@@ -27,9 +27,9 @@ export function CategoryCard({ category }: { category: Category }) {
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
         {category.description}
       </p>
-      <span className="text-xs text-muted-foreground">
+      {/* <span className="text-xs text-muted-foreground">
         {category.articleCount} Blogs
-      </span>
+      </span> */}
     </Link>
   );
 }

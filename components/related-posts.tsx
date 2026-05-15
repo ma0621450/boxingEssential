@@ -27,10 +27,10 @@ export function RelatedPosts({ Blogs }: { Blogs: Article[] }) {
                 <h3 className="text-sm font-semibold leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
                   {article.title}
                 </h3>
-                <div className="mt-auto flex items-center gap-1 text-xs text-muted-foreground pt-2">
+                {/* <div className="mt-auto flex items-center gap-1 text-xs text-muted-foreground pt-2">
                   <Clock className="h-3 w-3" />
                   {article.readTime}
-                </div>
+                </div> */}
               </div>
             </article>
           </Link>
