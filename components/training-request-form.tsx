@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User, Mail, Phone, Users, Calendar, Dumbbell, Send, CheckCircle2 } from "lucide-react";
 
-export function TrainingRequestForm() {
+export function TrainingRequestForm({ defaultType = "" }: { defaultType?: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [joinType, setJoinType] = useState("single");
@@ -119,15 +119,13 @@ export function TrainingRequestForm() {
           <select 
             required
             id="trainingType"
+            defaultValue={defaultType}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition appearance-none"
           >
-            <option value="">What kind of training are you looking for?</option>
-            <option value="boxing-basics">Boxing Basics & Fundamentals</option>
-            <option value="cardio-fitness">Cardio & Fitness Boxing</option>
-            <option value="amateur">Amateur Boxing Preparation</option>
-            <option value="pro">Pro Boxing Training</option>
-            <option value="self-defense">Self Defense</option>
-            <option value="other">Other (Specify in notes)</option>
+            <option value="">Select a training division</option>
+            <option value="gym-training">Gym Training</option>
+            <option value="boxing-training">Boxing Training</option>
+            <option value="fitness-training">Fitness Training</option>
           </select>
         </div>
 
