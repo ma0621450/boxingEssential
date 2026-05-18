@@ -84,7 +84,6 @@ export default async function VideoDetailPage({ params }: PageProps) {
       {/* Breadcrumbs */}
       <Breadcrumbs 
         items={[
-          { label: "Training Portal", href: "/training" },
           { label: categoryTitle, href: `/training/${video.category}` },
           { label: video.title }
         ]} 

@@ -108,7 +108,6 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
       {/* Breadcrumbs */}
       <Breadcrumbs 
         items={[
-          { label: "Training", href: "/training" },
           { label: categoryDetails.title }
         ]} 
       />

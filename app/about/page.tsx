@@ -294,7 +294,7 @@ export default function AboutPage() {
               <p className="text-xl opacity-90 mb-8 leading-relaxed">
                 We don't believe in generic training. We offer field-tested, progressive, and scalable guides whether you're training at home or at a pro gym.
               </p>
-              <Link href="/training" className="h-12 px-8 inline-flex items-center justify-center rounded-full bg-white text-primary font-black uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-xl">
+              <Link href="/training/boxing" className="h-12 px-8 inline-flex items-center justify-center rounded-full bg-white text-primary font-black uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-xl">
                 Explore Workouts
               </Link>
             </div>
