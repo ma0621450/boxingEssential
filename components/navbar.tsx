@@ -78,8 +78,8 @@ export function Navbar() {
                     <button
                       className={cn(
                         "px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1",
-                        dropdownOpen 
-                          ? "text-foreground bg-secondary" 
+                        dropdownOpen
+                          ? "text-foreground bg-secondary"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                       )}
                       aria-expanded={dropdownOpen}
@@ -93,8 +93,8 @@ export function Navbar() {
                     <div
                       className={cn(
                         "absolute left-0 mt-1 w-80 rounded-xl border border-border bg-background p-2 shadow-xl transition-all duration-200 z-50",
-                        dropdownOpen 
-                          ? "opacity-100 translate-y-0 pointer-events-auto" 
+                        dropdownOpen
+                          ? "opacity-100 translate-y-0 pointer-events-auto"
                           : "opacity-0 -translate-y-2 pointer-events-none"
                       )}
                     >
@@ -141,11 +141,11 @@ export function Navbar() {
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-3">
             <Link
-              href="/blog"
-              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              href="/live"
+              className="h-9 px-4 inline-flex items-center gap-2 rounded-md border border-border bg-secondary text-secondary-foreground text-sm font-semibold hover:bg-secondary/80 hover:text-primary hover:border-primary transition-colors"
               aria-label="Search Blogs"
             >
-              <Search className="h-4 w-4" />
+              Streaming
             </Link>
             <Link
               href="/contact-us"

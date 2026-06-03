@@ -36,6 +36,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -46,34 +47,135 @@
   .text-balance {
     text-wrap: balance;
   }
+
   .prose-boxing {
     @apply text-[1.125rem] leading-[1.8] text-foreground/90;
   }
+
   .prose-boxing h2 {
-    @apply text-2xl font-bold text-foreground mt-12 mb-4 border-l-4 border-primary pl-4;
+    @apply text-2xl font-bold text-foreground mt-12 mb-4;
   }
+
   .prose-boxing h3 {
     @apply text-xl font-semibold text-foreground mt-8 mb-3;
   }
+
   .prose-boxing p {
     @apply mb-6;
   }
+
   .prose-boxing ul {
     @apply list-disc pl-6 mb-6 space-y-2;
   }
+
   .prose-boxing ol {
     @apply list-decimal pl-6 mb-6 space-y-2;
   }
+
   .prose-boxing blockquote {
     @apply border-l-4 border-primary/50 pl-6 italic text-muted-foreground my-8;
   }
+
   .prose-boxing a {
     @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
   }
+
   .prose-boxing strong {
     @apply text-foreground font-semibold;
   }
+
   .prose-boxing img {
     @apply rounded-lg my-8;
   }
+}
+
+/* Add these styles to your globals.css */
+
+/* ── prose-boxing: rawHtml content styles ───────────────────── */
+.prose-boxing h2 {
+  @apply text-2xl lg:text-3xl font-black tracking-tight mt-12 mb-6 scroll-mt-28;
+}
+
+.prose-boxing h3 {
+  @apply text-xl lg:text-2xl font-bold tracking-tight mt-8 mb-4 scroll-mt-28;
+}
+
+.prose-boxing h4 {
+  @apply text-lg font-bold mt-6 mb-3 scroll-mt-28;
+}
+
+.prose-boxing p {
+  @apply text-base leading-relaxed mb-6;
+}
+
+.prose-boxing ul {
+  @apply list-disc pl-6 mb-6 space-y-2;
+}
+
+.prose-boxing ol {
+  @apply list-decimal pl-6 mb-6 space-y-2;
+}
+
+.prose-boxing li {
+  @apply leading-relaxed;
+}
+
+.prose-boxing strong,
+.prose-boxing b {
+  @apply font-bold;
+}
+
+/* ── Table styles ────────────────────────────────────────────── */
+.prose-boxing table,
+.prose-boxing .wp-table {
+  @apply w-full border-collapse text-sm mb-8 overflow-hidden rounded-lg;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose-boxing thead {
+  @apply bg-primary/10;
+}
+
+.prose-boxing th {
+  @apply px-4 py-3 text-left font-bold text-sm border border-border/50;
+}
+
+.prose-boxing td {
+  @apply px-4 py-3 text-sm border border-border/50 align-top;
+}
+
+.prose-boxing tr:nth-child(even) {
+  @apply bg-secondary/5;
+}
+
+.prose-boxing tr:hover {
+  @apply bg-secondary/10 transition-colors;
+}
+
+/* ── Blockquote ──────────────────────────────────────────────── */
+.prose-boxing blockquote {
+  @apply border-l-4 border-primary pl-4 italic my-6 text-muted-foreground;
+}
+
+/* ── Code ────────────────────────────────────────────────────── */
+.prose-boxing code {
+  @apply bg-secondary/20 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* ── Links (none from WP but just in case) ───────────────────── */
+.prose-boxing a {
+  @apply text-primary hover:underline transition-colors;
+}
+
+/* ── Custom Scrollbar for TOC ────────────────────────────────── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-border/50 rounded-full hover:bg-primary/55 transition-colors;
 }

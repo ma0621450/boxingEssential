@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Video, getVideosByCategory } from "@/lib/videoData";
+import { client } from "@/lib/sanity";
+import { getTutorialsByCategory } from "@/lib/queries";
 import { Blogs, Article } from "@/lib/data";
 import { VideoModal } from "@/components/video-modal";
 import { TrainingRequestForm } from "@/components/training-request-form";
@@ -19,11 +20,36 @@ interface TrainingCategoryClientProps {
 export function TrainingCategoryClient({ category }: TrainingCategoryClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeVideoSlug, setActiveVideoSlug] = useState<string | null>(null);
+  const [categoryVideos, setCategoryVideos] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 1. Fetch category specific videos
-  const categoryVideos = getVideosByCategory(category);
-  const featuredVideo = categoryVideos[0]; // First video is featured in hero
-  
+  useEffect(() => {
+    const sanityCategoryMap: any = {
+      gym: "Gym Training",
+      boxing: "Boxing Training",
+      fitness: "Fitness Training"
+    };
+
+    client.fetch(getTutorialsByCategory, { category: sanityCategoryMap[category] })
+      .then((data: any[]) => {
+        // Map Sanity tutorial schema to UI expected format
+        const mapped = data.map((d: any, index: number) => ({
+          ...d,
+          slug: d._id,
+          thumbnail: "https://images.pexels.com/photos/4761352/pexels-photo-4761352.jpeg?auto=compress&cs=tinysrgb&w=800", // Default since Sanity schema didn't have thumbnail
+          duration: "10:00",
+          views: "1K+",
+          date: new Date().toLocaleDateString()
+        }));
+        setCategoryVideos(mapped);
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [category]);
+
+  // 1. Featured video
+  const featuredVideo = categoryVideos.length > 0 ? categoryVideos[0] : null;
+
   // 2. Pagination Math (8 videos per page)
   const videosPerPage = 8;
   const totalPages = Math.ceil(categoryVideos.length / videosPerPage);
@@ -106,78 +132,84 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       {/* Breadcrumbs */}
-      <Breadcrumbs 
+      <Breadcrumbs
         items={[
           { label: categoryDetails.title }
-        ]} 
+        ]}
       />
 
       {/* 1. HERO SECTION (Category Specific Featured Video) */}
       <section className="mt-6 mb-16">
-        <div className="bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
-            
-            {/* Hero Left: Featured Video Thumbnail & Play Overlay */}
-            <div 
-              className="lg:col-span-7 relative aspect-video bg-black cursor-pointer group"
-              onClick={() => handleOpenModal(featuredVideo.slug)}
-            >
-              <Image
-                src={featuredVideo.thumbnail}
-                alt={featuredVideo.title}
-                fill
-                priority
-                className="object-cover opacity-80 group-hover:scale-[1.02] group-hover:opacity-90 transition-all duration-500"
-                sizes="(max-width: 1024px) 100vw, 60vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-              
-              {/* Play Button Icon */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition duration-300">
-                  <Play className="h-8 w-8 md:h-10 md:w-10 fill-current translate-x-0.5" />
+        {isLoading ? (
+          <div className="text-center py-20 text-muted-foreground">Loading tutorials...</div>
+        ) : !featuredVideo ? (
+          <div className="text-center py-20 text-muted-foreground">No tutorials found for this category.</div>
+        ) : (
+          <div className="bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+
+              {/* Hero Left: Featured Video Thumbnail & Play Overlay */}
+              <div
+                className="lg:col-span-7 relative aspect-video bg-black cursor-pointer group"
+                onClick={() => handleOpenModal(featuredVideo.slug)}
+              >
+                <Image
+                  src={featuredVideo.thumbnail}
+                  alt={featuredVideo.title}
+                  fill
+                  priority
+                  className="object-cover opacity-80 group-hover:scale-[1.02] group-hover:opacity-90 transition-all duration-500"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+                {/* Play Button Icon */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition duration-300">
+                    <Play className="h-8 w-8 md:h-10 md:w-10 fill-current translate-x-0.5" />
+                  </div>
+                </div>
+
+                {/* Banner indicator */}
+                <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] md:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                  <CategoryIcon className="h-3.5 w-3.5" /> Featured Class
+                </div>
+
+                {/* Video metadata pill */}
+                <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur px-3 py-1 rounded text-xs font-mono text-white">
+                  {featuredVideo.duration} • {featuredVideo.views} views
                 </div>
               </div>
 
-              {/* Banner indicator */}
-              <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] md:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                <CategoryIcon className="h-3.5 w-3.5" /> Featured Class
+              {/* Hero Right: Copy details */}
+              <div className="lg:col-span-5 p-8 md:p-10 flex flex-col justify-center text-white">
+                <span className={cn("text-xs font-extrabold uppercase tracking-widest", categoryDetails.themeColor)}>
+                  {categoryDetails.tagline}
+                </span>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mt-3 mb-4 leading-tight">
+                  {categoryDetails.title}
+                </h1>
+                <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6">
+                  {categoryDetails.description}
+                </p>
+
+                <div className="border-t border-zinc-800 pt-6">
+                  <span className="text-xs text-zinc-500 uppercase block font-semibold">Featured Lesson</span>
+                  <h4 className="text-base md:text-lg font-bold text-zinc-100 mt-1 line-clamp-1">
+                    {featuredVideo.title}
+                  </h4>
+                  <button
+                    onClick={() => handleOpenModal(featuredVideo.slug)}
+                    className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-red-600/10"
+                  >
+                    Watch Class <Play className="h-3.5 w-3.5 fill-current" />
+                  </button>
+                </div>
               </div>
 
-              {/* Video metadata pill */}
-              <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur px-3 py-1 rounded text-xs font-mono text-white">
-                {featuredVideo.duration} • {featuredVideo.views} views
-              </div>
             </div>
-
-            {/* Hero Right: Copy details */}
-            <div className="lg:col-span-5 p-8 md:p-10 flex flex-col justify-center text-white">
-              <span className={cn("text-xs font-extrabold uppercase tracking-widest", categoryDetails.themeColor)}>
-                {categoryDetails.tagline}
-              </span>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mt-3 mb-4 leading-tight">
-                {categoryDetails.title}
-              </h1>
-              <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6">
-                {categoryDetails.description}
-              </p>
-              
-              <div className="border-t border-zinc-800 pt-6">
-                <span className="text-xs text-zinc-500 uppercase block font-semibold">Featured Lesson</span>
-                <h4 className="text-base md:text-lg font-bold text-zinc-100 mt-1 line-clamp-1">
-                  {featuredVideo.title}
-                </h4>
-                <button
-                  onClick={() => handleOpenModal(featuredVideo.slug)}
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-red-600/10"
-                >
-                  Watch Class <Play className="h-3.5 w-3.5 fill-current" />
-                </button>
-              </div>
-            </div>
-
           </div>
-        </div>
+        )}
       </section>
 
       {/* 2. VIDEO GRID SECTION (PAGINATED) */}
@@ -215,7 +247,7 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-black/25 group-hover:bg-black/0 transition duration-300" />
-                
+
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
                   <div className="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg">
@@ -259,7 +291,7 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            
+
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
                 key={idx}
