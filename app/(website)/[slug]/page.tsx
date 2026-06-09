@@ -4,11 +4,13 @@ import Link from "next/link";
 import { Calendar, User, Newspaper } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TableOfContents } from "@/components/table-of-contents";
-import { SocialShare } from "@/components/social-share";
+import { ShareDropdown } from "@/components/share-dropdown";
+import { ArticleCard } from "@/components/article-card";
 import { serverClient, urlFor } from "@/lib/sanity";
-import { getPostBySlug } from "@/lib/queries";
+import { getPostBySlug, getRelatedPosts } from "@/lib/queries";
 import { groq } from "next-sanity";
-import PortableText from "@/components/PortableText";
+import { ArticleContent } from "@/components/article-content";
+import { AdBanner } from "@/components/ad-banner";
 import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
 
 export async function generateStaticParams() {
@@ -65,6 +67,13 @@ export default async function PostPage({
 
   const tocItems = article.rawHtml ? extractTOC(article.rawHtml) : [];
   const processedHtml = article.rawHtml ? injectHeadingIds(article.rawHtml) : null;
+  const shareUrl = `https://boxingessential.com/${article.slug}`;
+
+  const relatedPosts = await serverClient.fetch(getRelatedPosts, {
+    category: article.category,
+    slug: article.slug,
+  });
+  const relatedItems = relatedPosts.slice(0, 3);
 
   // ─── NEWS LAYOUT ─────────────────────────────────────────
   if (isNews) {
@@ -110,19 +119,22 @@ export default async function PostPage({
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight leading-tight mb-4">
                   {article.title}
                 </h1>
-                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5" />
-                    {article.author?.name || "Boxing Essential"}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {new Date(dateStr).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
+                <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <span className="flex items-center gap-1.5">
+                      <User className="h-3.5 w-3.5" />
+                      {article.author?.name || "Boxing Essential"}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {new Date(dateStr).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  <ShareDropdown url={shareUrl} title={article.title} image={imageUrl} align="right" />
                 </div>
               </header>
 
@@ -144,20 +156,24 @@ export default async function PostPage({
               )}
 
               <div className="prose-boxing">
-                {processedHtml ? (
-                  <div dangerouslySetInnerHTML={{ __html: processedHtml }} />
-                ) : (
-                  <PortableText value={article.content} />
-                )}
-              </div>
-
-              <div className="mt-8">
-                <SocialShare
-                  url={`https://boxingessential.com/${article.slug}`}
-                  title={article.title}
-                  image={imageUrl}
+                <ArticleContent
+                  processedHtml={processedHtml}
+                  content={article.content}
                 />
               </div>
+
+              <AdBanner />
+
+              {relatedItems.length > 0 && (
+                <section className="mt-12 pt-8 border-t border-border/50">
+                  <h2 className="text-xl font-bold mb-6">Related News</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {relatedItems.map((post: { _id: string }) => (
+                      <ArticleCard key={post._id} article={post} />
+                    ))}
+                  </div>
+                </section>
+              )}
             </article>
 
             <aside className="hidden lg:block">
@@ -243,19 +259,22 @@ export default async function PostPage({
               <h1 className="text-3xl lg:text-4xl font-black tracking-tight leading-tight mb-4">
                 {article.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5" />
-                  {article.author?.name || "Boxing Essential"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {new Date(dateStr).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </span>
+              <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-4">
+                  <span className="flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" />
+                    {article.author?.name || "Boxing Essential"}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {new Date(dateStr).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <ShareDropdown url={shareUrl} title={article.title} image={imageUrl} align="right" />
               </div>
             </header>
 
@@ -271,11 +290,10 @@ export default async function PostPage({
             </div>
 
             <div className="prose-boxing">
-              {processedHtml ? (
-                <div dangerouslySetInnerHTML={{ __html: processedHtml }} />
-              ) : (
-                <PortableText value={article.content} />
-              )}
+              <ArticleContent
+                processedHtml={processedHtml}
+                content={article.content}
+              />
             </div>
 
             {article.faqs && article.faqs.length > 0 && (
@@ -300,13 +318,18 @@ export default async function PostPage({
               </section>
             )}
 
-            <div className="mt-8">
-              <SocialShare
-                url={`https://boxingessential.com/${article.slug}`}
-                title={article.title}
-                image={imageUrl}
-              />
-            </div>
+            {article.faqs && article.faqs.length > 0 && <AdBanner />}
+
+            {relatedItems.length > 0 && (
+              <section className="mt-12 pt-8 border-t border-border/50">
+                <h2 className="text-xl font-bold mb-6">Related Articles</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {relatedItems.map((post: { _id: string }) => (
+                    <ArticleCard key={post._id} article={post} />
+                  ))}
+                </div>
+              </section>
+            )}
           </article>
 
           <aside className="hidden lg:block">

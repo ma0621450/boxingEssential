@@ -1,12 +1,14 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ShopProductGrid } from "@/components/shop-product-grid";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ShoppingBag, ShieldCheck, Truck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shop",
-  description: "Curated boxing gear and affiliate picks from Boxing Essential.",
+  title: "Shop Boxing Gear | Gloves, Bags, Shoes & More",
+  description:
+    "Expert-reviewed boxing gloves, punching bags, shoes, protective gear, and supplements. Curated affiliate picks from Boxing Essential.",
+  alternates: { canonical: "https://boxingessential.com/shop" },
 };
 
 export default function ShopPage() {
@@ -63,8 +65,10 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* Product Grid with Filters */}
-      <ShopProductGrid />
+      {/* Product Grid with Sidebar Filters */}
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-secondary/30" />}>
+        <ShopProductGrid />
+      </Suspense>
 
       {/* Disclaimer */}
       <div className="mt-16 p-6 bg-secondary/20 rounded-2xl border border-border/30 text-center">

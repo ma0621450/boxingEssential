@@ -28,46 +28,71 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] mb-6">
-              Train smarter.{" "}
-              <span className="text-primary">Fight better.</span>{" "}
-              Stay stronger.
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-xl">
-              Your complete resource for boxing training, nutrition, gear reviews, and fight strategy. Expert-backed content for every level.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/blog"
-                className="h-11 px-6 inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
-              >
-                Read Blogs
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/contact-us"
-                className="h-11 px-6 inline-flex items-center gap-2 rounded-md border border-border bg-secondary text-secondary-foreground text-sm font-semibold hover:bg-secondary/80 hover:text-primary hover:border-primary transition-colors"
-              >
-                <Target className="h-4 w-4" />
-                Contact Us
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="relative h-[100vh] overflow-hidden">
 
-      {/* The Odds API Scheduled Bouts */}
+  {/* BACKGROUND VIDEO */}
+  <video
+    src="/video.mp4"
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="absolute inset-0 w-full object-cover object-center scale-105 -z-20"
+  />
+
+  {/* DARK GRADIENT OVERLAY */}
+  <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-background -z-10" />
+
+  {/* RED GLOW EFFECT */}
+  {/* <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 -z-10" /> */}
+
+  {/* MAIN CONTENT */}
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+
+    <div className="max-w-3xl">
+
+      {/* HEADLINE */}
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] mb-6 text-white">
+        Train smarter.{" "}
+        <span className="text-primary">Fight better.</span>{" "}
+        Stay stronger.
+      </h1>
+
+      {/* DESCRIPTION */}
+      <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-xl">
+        Your complete resource for boxing training, nutrition, gear reviews, and fight strategy.
+        Expert-backed content for every level.
+      </p>
+
+      {/* CTA BUTTONS */}
+      <div className="flex flex-wrap gap-3">
+
+        <Link
+          href="/blog"
+          className="h-11 px-6 inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-all hover:scale-105"
+        >
+          Read Blogs
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+
+        <Link
+          href="/contact-us"
+          className="h-11 px-6 inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/5 text-white text-sm font-semibold hover:bg-white/10 hover:border-primary transition-all hover:scale-105"
+        >
+          <Target className="h-4 w-4" />
+          Contact Us
+        </Link>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
       {bouts && bouts.length > 0 ? <UpcomingBouts bouts={bouts} /> : null}
 
-      {/* Boxing Headlines Marquee */}
       {headlines && headlines.length > 0 ? <BoxingHeadlinesMarquee headlines={headlines} /> : null}
 
-      {/* Latest Blogs */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 border-t border-border/30">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -455,7 +455,7 @@ export default function AboutPage() {
       </section>
 
       {/* Get In Touch */}
-      <section className="py-24 bg-zinc-950 text-white">
+      <section id="socials" className="py-24 bg-zinc-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div>

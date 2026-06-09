@@ -1,60 +1,210 @@
 "use client";
 
-import { useState, useEffect } from "react";
-// import { products as mockProducts } from "@/lib/data";
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { SlidersHorizontal } from "lucide-react";
 import { ShopProductCard } from "@/components/shop-product-card";
 import { client } from "@/lib/sanity";
 import { getAffiliateProducts } from "@/lib/queries";
+import { mapSanityProduct } from "@/lib/affiliate-product";
+import { PRODUCT_CATEGORIES } from "@/lib/product-categories";
+import { cn } from "@/lib/utils";
 
 export function ShopProductGrid() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [products, setProducts] = useState<any[]>([]);
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const isValidCategory =
+    categoryParam &&
+    PRODUCT_CATEGORIES.some((c) => c.slug === categoryParam);
+
+  const [activeCategory, setActiveCategory] = useState(
+    isValidCategory ? categoryParam! : "All"
+  );
+  const [featuredOnly, setFeaturedOnly] = useState(!isValidCategory);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [products, setProducts] = useState<ReturnType<typeof mapSanityProduct>[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    client.fetch(getAffiliateProducts, { category: "ALL" })
-      .then((data: any[]) => setProducts(data))
-      .catch(console.error);
+    if (isValidCategory && categoryParam) {
+      setActiveCategory(categoryParam);
+      setFeaturedOnly(false);
+    }
+  }, [categoryParam, isValidCategory]);
+
+  useEffect(() => {
+    client
+      .fetch(getAffiliateProducts, { category: "ALL" })
+      .then((data) => setProducts(data.map(mapSanityProduct)))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  // Extract unique categories from products
-  const categories = ["All", ...Array.from(new Set(products.map((p: any) => p.category)))];
+  const filteredProducts = useMemo(() => {
+    let result = products;
 
-  const filteredProducts = activeCategory === "All"
-    ? products
-    : products.filter((p) => p.category === activeCategory);
+    if (featuredOnly) {
+      result = result.filter((p) => p.featured);
+    }
+
+    if (activeCategory !== "All") {
+      result = result.filter((p) => p.category === activeCategory);
+    }
+
+    return result;
+  }, [products, featuredOnly, activeCategory]);
+
+  const activeCategoryName =
+    activeCategory === "All"
+      ? "All Categories"
+      : PRODUCT_CATEGORIES.find((c) => c.slug === activeCategory)?.name ?? activeCategory;
+
+  const sectionTitle = featuredOnly ? "Featured Gear" : "All Gear";
+
+  const filterSidebar = (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+          Show
+        </h3>
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={featuredOnly}
+            onChange={(e) => setFeaturedOnly(e.target.checked)}
+            className="w-4 h-4 rounded border-border accent-primary"
+          />
+          <span className="text-sm font-medium group-hover:text-primary transition-colors">
+            Featured only
+          </span>
+        </label>
+      </div>
+
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+          Category
+        </h3>
+        <ul className="space-y-1">
+          <li>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("All")}
+              className={cn(
+                "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                activeCategory === "All"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary/60 text-foreground"
+              )}
+            >
+              All Categories
+            </button>
+          </li>
+          {PRODUCT_CATEGORIES.map((cat) => (
+            <li key={cat.slug}>
+              <button
+                type="button"
+                onClick={() => setActiveCategory(cat.slug)}
+                className={cn(
+                  "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  activeCategory === cat.slug
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-secondary/60 text-foreground"
+                )}
+              >
+                {cat.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {(activeCategory !== "All" || !featuredOnly) && (
+        <button
+          type="button"
+          onClick={() => {
+            setActiveCategory("All");
+            setFeaturedOnly(true);
+          }}
+          className="text-sm text-primary font-semibold hover:underline"
+        >
+          Clear filters
+        </button>
+      )}
+    </div>
+  );
 
   return (
     <div className="mb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-6">
-        <h2 className="text-3xl font-black">Featured Gear</h2>
-
-        {/* Category Filter */}
-        <div className="flex flex-wrap items-center gap-2">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${activeCategory === category
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-secondary/50 hover:bg-secondary text-secondary-foreground"
-                }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ShopProductCard key={product.id} product={product} />
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
-            No products found in this category.
+      <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-[180px] p-5 rounded-2xl border border-border/50 bg-card">
+            <h2 className="font-black text-lg mb-6">Filters</h2>
+            {filterSidebar}
           </div>
-        )}
+        </aside>
+
+        {/* Products */}
+        <div>
+          <div className="flex items-center justify-between mb-6 gap-4">
+            <div>
+              <h2 className="text-3xl font-black">{sectionTitle}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {loading
+                  ? "Loading..."
+                  : `${filteredProducts.length} product${filteredProducts.length !== 1 ? "s" : ""}`}
+                {!loading && activeCategory !== "All" && ` · ${activeCategoryName}`}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen((o) => !o)}
+              className="lg:hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border/50 bg-card text-sm font-semibold"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              Filters
+            </button>
+          </div>
+
+          {/* Mobile filters panel */}
+          {mobileFiltersOpen && (
+            <div className="lg:hidden mb-6 p-5 rounded-2xl border border-border/50 bg-card">
+              {filterSidebar}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="aspect-[3/4] rounded-2xl bg-secondary/30 animate-pulse"
+                />
+              ))}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+              {filteredProducts.map((product) => (
+                <ShopProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 rounded-2xl border border-border/50 bg-secondary/20">
+              <p className="text-muted-foreground mb-4">No products match your filters.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveCategory("All");
+                  setFeaturedOnly(false);
+                }}
+                className="text-primary font-semibold hover:underline"
+              >
+                Show all products
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

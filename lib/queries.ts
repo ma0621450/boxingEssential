@@ -157,40 +157,103 @@ export const getNewsCount = groq`
 
 // ─── Affiliate Products ───────────────────────────────────────
 
+const affiliateProductFields = `
+  _id,
+  title,
+  "slug": slug.current,
+  url,
+  price,
+  brand,
+  image {
+    asset->{ url },
+    alt
+  },
+  description,
+  category,
+  rating,
+  reviewCount,
+  featured,
+  ctaText
+`;
+
 export const getAffiliateProducts = groq`
   *[
     _type == "affiliateProduct" &&
+    defined(slug.current) &&
     (
-      $category == "ALL" || 
+      $category == "ALL" ||
       category == $category
     )
   ] | order(_createdAt desc) {
-    _id,
-    title,
-    url,
-    price,
-    image {
-      asset->{ url }
+    ${affiliateProductFields}
+  }
+`;
+
+export const getAffiliateProductBySlug = groq`
+  *[
+    _type == "affiliateProduct" &&
+    slug.current == $slug &&
+    category == $category
+  ][0] {
+    ${affiliateProductFields},
+    gallery[] {
+      asset->{ url },
+      alt,
+      caption
     },
-    description,
+    keyFeatures,
+    specifications[] { label, value },
+    benefits,
+    pros,
+    cons,
+    expertReview,
+    comparisonProducts[] {
+      name,
+      price,
+      rating,
+      highlight,
+      url,
+      isCurrent
+    },
+    rawHtml,
+    content[] {
+      ...,
+      _type == "image" => {
+        ...,
+        asset->{ _id, url, metadata { dimensions } }
+      }
+    },
+    faqs[] { question, answer },
+    seo {
+      metaTitle,
+      metaDescription,
+      focusKeyword,
+      ogImage { asset->{ url } }
+    }
+  }
+`;
+
+export const getAffiliateProductSlugs = groq`
+  *[_type == "affiliateProduct" && defined(slug.current)] {
+    "slug": slug.current,
     category
   }
 `;
 
-// ─── Tutorials ────────────────────────────────────────────────
-
-export const getTutorialsByCategory = groq`
+export const getRelatedAffiliateProducts = groq`
   *[
-    _type == "tutorial" && 
-    category == $category
-  ] | order(_createdAt desc) {
-    _id,
-    title,
-    youtubeUrl,
-    category,
-    description
+    _type == "affiliateProduct" &&
+    category == $category &&
+    slug.current != $slug &&
+    defined(slug.current)
+  ] | order(_createdAt desc) [0..3] {
+    ${affiliateProductFields}
   }
 `;
+
+// ─── Tutorials (see lib/tutorial-queries.ts for full queries) ─
+
+export { getTutorialsByCategory } from "./tutorial-queries";
 
 // ─── Sitemap (for SEO) ────────────────────────────────────────
 
