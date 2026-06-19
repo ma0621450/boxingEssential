@@ -13,6 +13,8 @@ import { ArticleContent } from "@/components/article-content";
 import { AdBanner } from "@/components/ad-banner";
 import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   const query = groq`*[_type == "post" && defined(slug.current)][].slug.current`;
   const slugs = await serverClient.fetch(query);
