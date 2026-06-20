@@ -12,6 +12,7 @@ import { groq } from "next-sanity";
 import { ArticleContent } from "@/components/article-content";
 import { AdBanner } from "@/components/ad-banner";
 import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
+import { normalizeArticleHtml } from "@/lib/normalize-article-html";
 
 export const revalidate = 3600;
 
@@ -68,7 +69,9 @@ export default async function PostPage({
   const dateStr = article.publishedAt || new Date().toISOString();
 
   const tocItems = article.rawHtml ? extractTOC(article.rawHtml) : [];
-  const processedHtml = article.rawHtml ? injectHeadingIds(article.rawHtml) : null;
+  const processedHtml = article.rawHtml
+    ? normalizeArticleHtml(injectHeadingIds(article.rawHtml))
+    : null;
   const shareUrl = `https://boxingessential.com/${article.slug}`;
 
   const relatedPosts = await serverClient.fetch(getRelatedPosts, {

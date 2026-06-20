@@ -25,6 +25,7 @@ import {
 import { getCategoryBySlug, getCategoryName } from "@/lib/product-categories";
 import { mapSanityProduct } from "@/lib/affiliate-product";
 import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
+import { normalizeArticleHtml } from "@/lib/normalize-article-html";
 import { TableOfContents } from "@/components/table-of-contents";
 
 const SITE_URL = "https://boxingessential.com";
@@ -117,7 +118,9 @@ export default async function ProductPage({
 
   const shareUrl = `${SITE_URL}/shop/${category}/${slug}`;
   const tocItems = product.rawHtml ? extractTOC(product.rawHtml) : [];
-  const processedHtml = product.rawHtml ? injectHeadingIds(product.rawHtml) : null;
+  const processedHtml = product.rawHtml
+    ? normalizeArticleHtml(injectHeadingIds(product.rawHtml))
+    : null;
 
   const categoryShopUrl = `${SITE_URL}/shop?category=${category}`;
 
