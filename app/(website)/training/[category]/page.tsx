@@ -1,58 +1,59 @@
 import { notFound } from "next/navigation";
 import { TrainingCategoryClient } from "@/components/training-category-client";
+import { getBlogsByTrainingCategory } from "@/lib/queries";
+import { serverClient } from "@/lib/sanity";
+import { withYoutubeDurationList } from "@/lib/enrich-tutorial";
+import { getTutorialsByCategory } from "@/lib/tutorial-queries";
+import {
+  getCategoryLabel,
+  mapSanityTutorials,
+  type SanityTutorial,
+  type TutorialCategory,
+} from "@/lib/tutorial";
+
+export const revalidate = 3600;
+
+const TRAINING_CATEGORIES: TutorialCategory[] = ["gym", "boxing", "fitness"];
 
 interface PageProps {
   params: Promise<{ category: string }>;
 }
 
-// Generate static params for static generation/pre-rendering optimization
 export async function generateStaticParams() {
-  return [
-    { category: "gym" },
-    { category: "boxing" },
-    { category: "fitness" }
-  ];
+  return TRAINING_CATEGORIES.map((category) => ({ category }));
 }
 
-// Dynamically generate SEO tags and OpenGraph configurations
+const categorySeo = {
+  gym: {
+    title: "Gym Training School | Boxing Essential",
+    description:
+      "Build foundational boxing strength, explosive muscle power, and full-body conditioning with fighter weights and core circuits.",
+  },
+  boxing: {
+    title: "Boxing Training School | Boxing Essential",
+    description:
+      "Master ring strategy, rapid footwork mechanics, snappy punch combinations, and pocket defense from elite trainers.",
+  },
+  fitness: {
+    title: "Fitness Training School | Boxing Essential",
+    description:
+      "Get in peak boxer shape with high-intensity cardio boxing intervals, fat-burn shadowboxing circuits, and endurance exercises.",
+  },
+} as const;
+
 export async function generateMetadata({ params }: PageProps) {
   const { category } = await params;
+  if (!TRAINING_CATEGORIES.includes(category as TutorialCategory)) return {};
 
-  if (category !== "gym" && category !== "boxing" && category !== "fitness") {
-    return {};
-  }
-
-  const categoryDetails = {
-    gym: {
-      title: "Gym Training School | Boxing Essential",
-      description: "Build foundational boxing strength, explosive muscle power, and full-body conditioning with fighter weights and core circuits.",
-    },
-    boxing: {
-      title: "Boxing Training School | Boxing Essential",
-      description: "Master ring strategy, rapid footwork mechanics, snappy punch combinations, and pocket defense from elite trainers.",
-    },
-    fitness: {
-      title: "Fitness Training School | Boxing Essential",
-      description: "Get in peak boxer shape with high-intensity cardio boxing intervals, fat-burn shadowboxing circuits, and endurance exercises.",
-    },
-  }[category];
-
+  const details = categorySeo[category as TutorialCategory];
   return {
-    title: categoryDetails.title,
-    description: categoryDetails.description,
+    title: details.title,
+    description: details.description,
     openGraph: {
-      title: categoryDetails.title,
-      description: categoryDetails.description,
+      title: details.title,
+      description: details.description,
       type: "website",
       url: `https://boxingessential.com/training/${category}`,
-      images: [
-        {
-          url: "https://images.pexels.com/photos/4761359/pexels-photo-4761359.jpeg?auto=compress&cs=tinysrgb&w=800",
-          width: 800,
-          height: 600,
-          alt: `${categoryDetails.title} Banner`,
-        }
-      ]
     },
   };
 }
@@ -60,10 +61,28 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function Page({ params }: PageProps) {
   const { category } = await params;
 
-  // Validate request category parameters
-  if (category !== "gym" && category !== "boxing" && category !== "fitness") {
+  if (!TRAINING_CATEGORIES.includes(category as TutorialCategory)) {
     notFound();
   }
 
-  return <TrainingCategoryClient category={category} />;
+  const typedCategory = category as TutorialCategory;
+
+  const [relatedBlogs, categoryVideos] = await Promise.all([
+    serverClient.fetch(getBlogsByTrainingCategory, {
+      category: getCategoryLabel(typedCategory),
+    }),
+    withYoutubeDurationList(
+      await serverClient.fetch<SanityTutorial[]>(getTutorialsByCategory, {
+        category: typedCategory,
+      })
+    ).then(mapSanityTutorials),
+  ]);
+
+  return (
+    <TrainingCategoryClient
+      category={typedCategory}
+      categoryVideos={categoryVideos}
+      relatedBlogs={relatedBlogs}
+    />
+  );
 }

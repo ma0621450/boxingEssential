@@ -7,7 +7,7 @@ import { getHomeLiveData } from "@/lib/home-live-data";
 import { serverClient } from "@/lib/sanity";
 import { getPaginatedNews, getPaginatedBlogs } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function HomePage() {
   const { bouts, headlines } = await getHomeLiveData();

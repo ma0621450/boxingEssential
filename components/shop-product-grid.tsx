@@ -4,26 +4,28 @@ import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { ShopProductCard } from "@/components/shop-product-card";
-import { client } from "@/lib/sanity";
-import { getAffiliateProducts } from "@/lib/queries";
-import { mapSanityProduct } from "@/lib/affiliate-product";
-import { PRODUCT_CATEGORIES } from "@/lib/product-categories";
+import type { AffiliateProduct } from "@/lib/affiliate-product";
+import { getCategoryName, type ProductCategory } from "@/lib/product-categories";
 import { cn } from "@/lib/utils";
 
-export function ShopProductGrid() {
+export function ShopProductGrid({
+  categories,
+  products,
+}: {
+  categories: ProductCategory[];
+  products: AffiliateProduct[];
+}) {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
   const isValidCategory =
     categoryParam &&
-    PRODUCT_CATEGORIES.some((c) => c.slug === categoryParam);
+    categories.some((c) => c.slug === categoryParam);
 
   const [activeCategory, setActiveCategory] = useState(
     isValidCategory ? categoryParam! : "All"
   );
   const [featuredOnly, setFeaturedOnly] = useState(!isValidCategory);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [products, setProducts] = useState<ReturnType<typeof mapSanityProduct>[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isValidCategory && categoryParam) {
@@ -31,14 +33,6 @@ export function ShopProductGrid() {
       setFeaturedOnly(false);
     }
   }, [categoryParam, isValidCategory]);
-
-  useEffect(() => {
-    client
-      .fetch(getAffiliateProducts, { category: "ALL" })
-      .then((data) => setProducts(data.map(mapSanityProduct)))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
 
   const filteredProducts = useMemo(() => {
     let result = products;
@@ -57,7 +51,7 @@ export function ShopProductGrid() {
   const activeCategoryName =
     activeCategory === "All"
       ? "All Categories"
-      : PRODUCT_CATEGORIES.find((c) => c.slug === activeCategory)?.name ?? activeCategory;
+      : categories.find((c) => c.slug === activeCategory)?.name ?? getCategoryName(activeCategory);
 
   const sectionTitle = featuredOnly ? "Featured Gear" : "All Gear";
 
@@ -99,7 +93,7 @@ export function ShopProductGrid() {
               All Categories
             </button>
           </li>
-          {PRODUCT_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <li key={cat.slug}>
               <button
                 type="button"
@@ -150,10 +144,8 @@ export function ShopProductGrid() {
             <div>
               <h2 className="text-3xl font-black">{sectionTitle}</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {loading
-                  ? "Loading..."
-                  : `${filteredProducts.length} product${filteredProducts.length !== 1 ? "s" : ""}`}
-                {!loading && activeCategory !== "All" && ` · ${activeCategoryName}`}
+                {`${filteredProducts.length} product${filteredProducts.length !== 1 ? "s" : ""}`}
+                {activeCategory !== "All" && ` · ${activeCategoryName}`}
               </p>
             </div>
 
@@ -174,16 +166,7 @@ export function ShopProductGrid() {
             </div>
           )}
 
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-[3/4] rounded-2xl bg-secondary/30 animate-pulse"
-                />
-              ))}
-            </div>
-          ) : filteredProducts.length > 0 ? (
+          {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
                 <ShopProductCard key={product.id} product={product} />

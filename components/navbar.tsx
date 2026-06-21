@@ -2,10 +2,32 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Search, ChevronDown, Dumbbell, Trophy, HeartPulse } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, ChevronDown, Dumbbell, Trophy, HeartPulse } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png"
 import Image from "next/image";
+
+function isLinkActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+const navLinkClass = (active: boolean) =>
+  cn(
+    "px-3 py-2 text-sm font-medium rounded-md transition-colors",
+    active
+      ? "text-foreground bg-secondary"
+      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+  );
+
+const mobileNavLinkClass = (active: boolean) =>
+  cn(
+    "px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
+    active
+      ? "text-foreground bg-secondary"
+      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+  );
 
 // Define structured navigation links. 
 // Standard items have an href, while dropdown items have sub-items.
@@ -21,29 +43,30 @@ const navLinks = [
         label: "Gym Training",
         description: "Strength, conditioning & athletic development workouts.",
         icon: Dumbbell,
-        color: "text-red-500 bg-red-500/10 dark:bg-red-500/20"
+        color: "text-red-500 bg-red-500/10 dark:bg-red-500/20",
       },
       {
         href: "/training/boxing",
         label: "Boxing Training",
         description: "Ring technique, mitt work & sparring preparation.",
         icon: Trophy,
-        color: "text-amber-500 bg-amber-500/10 dark:bg-amber-500/20"
+        color: "text-amber-500 bg-amber-500/10 dark:bg-amber-500/20",
       },
       {
         href: "/training/fitness",
         label: "Fitness Training",
         description: "High-energy cardio conditioning & fat-burn routines.",
         icon: HeartPulse,
-        color: "text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-      }
-    ]
+        color: "text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20",
+      },
+    ],
   },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
@@ -68,6 +91,10 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               if (link.dropdownItems) {
+                const isTrainingActive = link.dropdownItems.some((item) =>
+                  isLinkActive(pathname, item.href)
+                );
+
                 return (
                   <div
                     key={link.label}
@@ -78,7 +105,7 @@ export function Navbar() {
                     <button
                       className={cn(
                         "px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1",
-                        dropdownOpen
+                        dropdownOpen || isTrainingActive
                           ? "text-foreground bg-secondary"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                       )}
@@ -101,11 +128,17 @@ export function Navbar() {
                       <div className="grid gap-1">
                         {link.dropdownItems.map((item) => {
                           const Icon = item.icon;
+                          const itemActive = isLinkActive(pathname, item.href);
                           return (
                             <Link
                               key={item.href}
                               href={item.href}
-                              className="flex items-start gap-3 p-3 rounded-lg hover:bg-secondary transition-colors"
+                              className={cn(
+                                "flex items-start gap-3 p-3 rounded-lg transition-colors",
+                                itemActive
+                                  ? "bg-secondary text-foreground"
+                                  : "hover:bg-secondary"
+                              )}
                             >
                               <div className={cn("p-2 rounded-lg shrink-0", item.color)}>
                                 <Icon className="h-5 w-5" />
@@ -127,10 +160,7 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={cn(
-                    "px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                    "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  )}
+                  className={navLinkClass(isLinkActive(pathname, link.href!))}
                 >
                   {link.label}
                 </Link>
@@ -142,7 +172,12 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/live"
-              className="h-9 px-4 inline-flex items-center gap-2 rounded-md border border-border bg-secondary text-secondary-foreground text-sm font-semibold hover:bg-secondary/80 hover:text-primary hover:border-primary transition-colors"
+              className={cn(
+                "h-9 px-4 inline-flex items-center gap-2 rounded-md border text-sm font-semibold transition-colors",
+                isLinkActive(pathname, "/live")
+                  ? "border-primary bg-secondary text-foreground"
+                  : "border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-primary hover:border-primary"
+              )}
               aria-label="Search Blogs"
             >
               Streaming
@@ -172,11 +207,18 @@ export function Navbar() {
           <nav className="flex flex-col p-4 gap-1">
             {navLinks.map((link) => {
               if (link.dropdownItems) {
+                const isTrainingActive = link.dropdownItems.some((item) =>
+                  isLinkActive(pathname, item.href)
+                );
+
                 return (
                   <div key={link.label} className="w-full">
                     <button
                       onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                      className={cn(
+                        "w-full flex items-center justify-between",
+                        mobileNavLinkClass(isTrainingActive)
+                      )}
                     >
                       <span>{link.label}</span>
                       <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", mobileDropdownOpen && "rotate-180")} />
@@ -185,6 +227,7 @@ export function Navbar() {
                       <div className="pl-4 pr-2 py-1 flex flex-col gap-1 border-l border-border/60 ml-3 mt-1 mb-2 animate-in fade-in slide-in-from-top-1 duration-200">
                         {link.dropdownItems.map((item) => {
                           const Icon = item.icon;
+                          const itemActive = isLinkActive(pathname, item.href);
                           return (
                             <Link
                               key={item.href}
@@ -193,7 +236,12 @@ export function Navbar() {
                                 setMobileDropdownOpen(false);
                                 setMobileOpen(false);
                               }}
-                              className="flex items-center gap-3 p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                              className={cn(
+                                "flex items-center gap-3 p-2 rounded-md transition-colors",
+                                itemActive
+                                  ? "bg-secondary text-foreground"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                              )}
                             >
                               <div className={cn("p-1.5 rounded-md", item.color)}>
                                 <Icon className="h-4 w-4" />
@@ -213,7 +261,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="px-3 py-2.5 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  className={mobileNavLinkClass(isLinkActive(pathname, link.href!))}
                 >
                   {link.label}
                 </Link>

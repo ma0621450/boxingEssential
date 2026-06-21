@@ -12,13 +12,6 @@ export function getYoutubeId(url: string): string | null {
   return null;
 }
 
-export function getYoutubeThumbnail(url: string): string {
-  const id = getYoutubeId(url);
-  return id
-    ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
-    : "https://images.pexels.com/photos/4761352/pexels-photo-4761352.jpeg?auto=compress&cs=tinysrgb&w=800";
-}
-
 export function getYoutubeEmbedUrl(url: string): string {
   const id = getYoutubeId(url);
   return id ? `https://www.youtube.com/embed/${id}` : url;

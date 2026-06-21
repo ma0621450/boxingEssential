@@ -1,5 +1,5 @@
 import { serverClient } from "@/lib/sanity";
-import { getPaginatedBlogs, getBlogsCount, searchBlogs, searchBlogsCount } from "@/lib/queries";
+import { getPaginatedBlogs, getBlogsCount, searchBlogs, searchBlogsCount, getBlogCategories } from "@/lib/queries";
 import { ArticleCard } from "@/components/article-card";
 import { BlogFilters } from "@/components/blog-filters";
 import { Pagination } from "@/components/pagination";
@@ -8,13 +8,6 @@ import { BlogPageClient } from "@/components/blog-page-client";
 
 export const revalidate = 3600;
 const POSTS_PER_PAGE = 12;
-const BLOG_CATEGORIES = [
-  { slug: "ALL", name: "All" },
-  { slug: "Boxing Training", name: "Boxing Training" },
-  { slug: "Fitness Training", name: "Fitness Training" },
-  { slug: "Gym Training", name: "Gym Training" },
-  { slug: "Gear Reviews", name: "Gear Reviews" },
-];
 
 export async function generateMetadata({
   searchParams,
@@ -56,14 +49,20 @@ export default async function BlogPage({
 
   const isSearch = searchQuery.length > 0;
 
-  const [blogs, totalCount] = await Promise.all([
+  const [blogs, totalCount, categorySlugs] = await Promise.all([
     isSearch
       ? serverClient.fetch(searchBlogs, { query: `${searchQuery}*`, start, end } as any)
       : serverClient.fetch(getPaginatedBlogs, { category: selectedCategory, start, end }),
     isSearch
       ? serverClient.fetch(searchBlogsCount, { query: `${searchQuery}*` } as any)
       : serverClient.fetch(getBlogsCount, { category: selectedCategory }),
+    serverClient.fetch<string[]>(getBlogCategories),
   ]);
+
+  const categories = [
+    { slug: "ALL", name: "All" },
+    ...categorySlugs.map((slug) => ({ slug, name: slug })),
+  ];
 
   const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);
 
@@ -76,7 +75,7 @@ export default async function BlogPage({
       selectedCategory={selectedCategory}
       searchQuery={searchQuery}
       isSearch={isSearch}
-      categories={BLOG_CATEGORIES}
+      categories={categories}
     />
   );
 }

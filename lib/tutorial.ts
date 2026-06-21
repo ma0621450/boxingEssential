@@ -1,4 +1,5 @@
-import { getYoutubeEmbedUrl, getYoutubeThumbnail } from "./youtube";
+import { PLACEHOLDER_IMAGE } from "./images";
+import { getYoutubeEmbedUrl } from "./youtube";
 
 export type TutorialCategory = "gym" | "boxing" | "fitness";
 
@@ -62,7 +63,7 @@ export function mapSanityTutorial(
     categoryLabel: getCategoryLabel(raw.category),
     youtubeUrl: raw.youtubeUrl,
     embedUrl: getYoutubeEmbedUrl(raw.youtubeUrl),
-    thumbnail: raw.thumbnail?.asset?.url ?? getYoutubeThumbnail(raw.youtubeUrl),
+    thumbnail: raw.thumbnail?.asset?.url ?? PLACEHOLDER_IMAGE,
     duration: raw.duration ?? "—",
     views: raw.views ?? "0",
     date: raw.publishedAt

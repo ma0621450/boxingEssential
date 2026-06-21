@@ -250,9 +250,18 @@ export default function AboutPage() {
               Boxing isn’t one-size-fits-all. Every fighter is unique, and so is their style. We help you discover the style that matches your physical traits and mental approach.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {fightingStyles.map((style) => (
-              <div key={style.title} className="group flex flex-col h-full bg-secondary/20 rounded-2xl overflow-hidden border border-border/50 transition-all hover:-translate-y-2 hover:bg-secondary/40">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
+            {fightingStyles.map((style, index) => (
+              <div
+                key={style.title}
+                className={`group flex flex-col h-full bg-secondary/20 rounded-2xl overflow-hidden border border-border/50 transition-all hover:-translate-y-2 hover:bg-secondary/40 ${
+                  index < 3
+                    ? "lg:col-span-2"
+                    : index === 3
+                      ? "lg:col-span-2 lg:col-start-2"
+                      : "lg:col-span-2 lg:col-start-4"
+                }`}
+              >
                 <div className="relative h-40">
                   <Image src={style.image} alt={style.title} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />

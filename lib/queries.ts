@@ -99,6 +99,52 @@ export const getPostBySlug = groq`
 
 // ─── Related Posts ────────────────────────────────────────────
 
+export const getBlogCategories = groq`
+  array::unique(*[_type == "post" && category != "News" && defined(category)].category)
+`;
+
+export const getAffiliateProductCategories = groq`
+  array::unique(*[_type == "affiliateProduct" && defined(category)].category)
+`;
+
+export const getFeaturedAffiliateProducts = groq`
+  *[_type == "affiliateProduct" && featured == true && defined(url)] | order(_createdAt desc) [0..3] {
+    _id,
+    title,
+    description,
+    price,
+    "image": image.asset->url,
+    "affiliateUrl": url,
+    category
+  }
+`;
+
+export const getBlogsByTrainingCategory = groq`
+  *[
+    _type == "post" &&
+    category != "News" &&
+    category == $category &&
+    defined(slug.current)
+  ] | order(publishedAt desc) [0..2] {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    mainImage {
+      asset->{
+        _id,
+        url
+      },
+      alt
+    },
+    category,
+    author-> {
+      name
+    }
+  }
+`;
+
 export const getRelatedPosts = groq`
   *[
     _type == "post" && 

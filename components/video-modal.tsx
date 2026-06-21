@@ -12,13 +12,21 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { Tutorial } from "@/lib/tutorial";
-import { products } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+
+type FeaturedProduct = {
+  _id: string;
+  title: string;
+  price?: string;
+  image?: string;
+  affiliateUrl: string;
+};
 
 interface VideoModalProps {
   video: Tutorial;
   allCategoryVideos: Tutorial[];
+  featuredProducts?: FeaturedProduct[];
   onClose: () => void;
   onNavigate: (slug: string) => void;
 }
@@ -26,6 +34,7 @@ interface VideoModalProps {
 export function VideoModal({
   video,
   allCategoryVideos,
+  featuredProducts = [],
   onClose,
   onNavigate,
 }: VideoModalProps) {
@@ -60,7 +69,7 @@ export function VideoModal({
     .filter((v) => v.slug !== video.slug)
     .slice(0, 3);
 
-  const featuredProducts = products.slice(0, 2);
+  const sidebarProducts = featuredProducts.slice(0, 2);
 
   return (
     <div
@@ -208,38 +217,48 @@ export function VideoModal({
               </div>
             </div>
 
-            <div className="border-t border-border/60 pt-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-1.5">
-                <ShoppingBag className="h-4 w-4 text-red-500" /> Recommended Gear
-              </h3>
-              <div className="space-y-3">
-                {featuredProducts.map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-background/50 backdrop-blur"
-                  >
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-secondary">
-                      <img
-                        src={prod.image}
-                        alt={prod.name}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-xs font-bold truncate text-foreground">{prod.name}</h4>
-                      <span className="text-xs text-red-500 font-extrabold">{prod.price}</span>
-                    </div>
-                    <a
-                      href={prod.affiliateUrl}
-                      className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                      title="Buy Gear"
+            {sidebarProducts.length > 0 && (
+              <div className="border-t border-border/60 pt-6">
+                <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-1.5">
+                  <ShoppingBag className="h-4 w-4 text-red-500" /> Recommended Gear
+                </h3>
+                <div className="space-y-3">
+                  {sidebarProducts.map((prod) => (
+                    <div
+                      key={prod._id}
+                      className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-background/50 backdrop-blur"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </a>
-                  </div>
-                ))}
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-secondary">
+                        {prod.image && (
+                          <Image
+                            src={prod.image}
+                            alt={prod.title}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-xs font-bold truncate text-foreground">{prod.title}</h4>
+                        {prod.price && (
+                          <span className="text-xs text-red-500 font-extrabold">{prod.price}</span>
+                        )}
+                      </div>
+                      <a
+                        href={prod.affiliateUrl}
+                        className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                        title="Buy Gear"
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                      >
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="border-t border-border/60 pt-6">
               <Link

@@ -3,6 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { serverClient } from "@/lib/sanity";
 import {
+  getBlogsByTrainingCategory,
+  getFeaturedAffiliateProducts,
+} from "@/lib/queries";
+import {
   getTutorialBySlug,
   getTutorialsByCategory,
   getRelatedTutorials,
@@ -15,7 +19,7 @@ import {
   type SanityTutorial,
 } from "@/lib/tutorial";
 import { withYoutubeDuration, withYoutubeDurationList } from "@/lib/enrich-tutorial";
-import { getYoutubeThumbnail } from "@/lib/youtube";
+import { PLACEHOLDER_IMAGE } from "@/lib/images";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TrainingRequestForm } from "@/components/training-request-form";
 import { ArticleCard } from "@/components/article-card";
@@ -59,7 +63,7 @@ export async function generateMetadata({ params }: PageProps) {
   const ogImage =
     raw.seo?.ogImage?.asset?.url ??
     raw.thumbnail?.asset?.url ??
-    getYoutubeThumbnail(raw.youtubeUrl);
+    PLACEHOLDER_IMAGE;
 
   return {
     title,
@@ -103,38 +107,12 @@ export default async function VideoDetailPage({ params }: PageProps) {
   );
   const relatedVideos = mapSanityTutorials(relatedRaw);
 
-  const categoryBlogMap: Record<string, string[]> = {
-    gym: ["boxing-workout-beginners", "boxing-cardio-workout"],
-    boxing: ["how-to-jab", "boxing-stance-guide", "counter-fighting-guide"],
-    fitness: ["boxing-cardio-workout", "boxing-diet-plan"],
-  };
-
-  const relatedBlogSlugs = categoryBlogMap[raw.category] || [];
-  const relatedBlogs =
-    relatedBlogSlugs.length > 0
-      ? await serverClient.fetch(
-          `*[_type == "post" && slug.current in $slugs]{
-            _id,
-            title,
-            "slug": slug.current,
-            publishedAt,
-            excerpt,
-            mainImage { asset->{ url } },
-            category
-          }`,
-          { slugs: relatedBlogSlugs }
-        )
-      : [];
-
-  const products = await serverClient.fetch(
-    `*[_type == "affiliateProduct" && featured == true][0..1]{
-      _id,
-      "name": title,
-      price,
-      "image": image.asset->url,
-      "affiliateUrl": url
-    }`
-  );
+  const [relatedBlogs, products] = await Promise.all([
+    serverClient.fetch(getBlogsByTrainingCategory, {
+      category: getCategoryLabel(raw.category),
+    }),
+    serverClient.fetch(getFeaturedAffiliateProducts),
+  ]);
 
   const categoryTitle = getCategoryLabel(video.category);
   const shareUrl = `${SITE_URL}/videos/${slug}`;
@@ -331,22 +309,24 @@ export default async function VideoDetailPage({ params }: PageProps) {
                   <ShoppingBag className="h-4 w-4 text-red-500" /> Recommended
                 </h3>
                 <div className="space-y-3">
-                  {products.map((prod: { _id: string; name: string; price: string; image: string; affiliateUrl: string }) => (
+                  {products.map((prod: { _id: string; title: string; price?: string; image?: string; affiliateUrl: string }) => (
                     <div
                       key={prod._id}
                       className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-background/50"
                     >
                       <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-secondary">
-                        <Image
-                          src={prod.image}
-                          alt={prod.name}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
+                        {prod.image && (
+                          <Image
+                            src={prod.image}
+                            alt={prod.title}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-xs font-bold truncate">{prod.name}</h4>
+                        <h4 className="text-xs font-bold truncate">{prod.title}</h4>
                         <span className="text-xs text-red-500 font-extrabold">
                           {prod.price}
                         </span>
@@ -390,7 +370,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl md:text-3xl font-black tracking-tight">
-                  Highly Relevant Guides
+                  Highly Relevant Blogs
                 </h2>
                 <p className="text-muted-foreground text-sm mt-1">
                   Expand your training knowledge with deep-dive written articles.
@@ -404,8 +384,8 @@ export default async function VideoDetailPage({ params }: PageProps) {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedBlogs.map((blog: { slug: string }) => (
-                <ArticleCard key={blog.slug} article={blog} />
+              {relatedBlogs.map((blog: { _id: string; slug: string }) => (
+                <ArticleCard key={blog._id} article={blog} />
               ))}
             </div>
           </section>

@@ -12,6 +12,7 @@ import { groq } from "next-sanity";
 import { ArticleContent } from "@/components/article-content";
 import { AdBanner } from "@/components/ad-banner";
 import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
+import { PLACEHOLDER_IMAGE } from "@/lib/images";
 import { normalizeArticleHtml } from "@/lib/normalize-article-html";
 
 export const revalidate = 3600;
@@ -34,7 +35,7 @@ export async function generateMetadata({
 
   const imageUrl = article.mainImage
     ? urlFor(article.mainImage).url()
-    : "https://images.pexels.com/photos/6212958/pexels-photo-6212958.jpeg";
+    : PLACEHOLDER_IMAGE;
 
   const isNews = article.category?.toLowerCase() === "news";
 
@@ -65,7 +66,7 @@ export default async function PostPage({
   const isNews = article.category?.toLowerCase() === "news";
   const imageUrl = article.mainImage
     ? urlFor(article.mainImage).url()
-    : "https://images.pexels.com/photos/6212958/pexels-photo-6212958.jpeg";
+    : PLACEHOLDER_IMAGE;
   const dateStr = article.publishedAt || new Date().toISOString();
 
   const tocItems = article.rawHtml ? extractTOC(article.rawHtml) : [];

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import type { Product } from "@/lib/data";
+import type { AffiliateProduct } from "@/lib/affiliate-product";
 
-export function AffiliateProductCard({ product }: { product: Product }) {
+export function AffiliateProductCard({ product }: { product: AffiliateProduct }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all duration-300">
       <div className="relative w-full sm:w-32 h-32 shrink-0 rounded-md overflow-hidden bg-secondary/30">
@@ -47,7 +47,7 @@ export function AffiliateBlock({
 }: {
   title: string;
   description?: string;
-  products: Product[];
+  products: AffiliateProduct[];
 }) {
   return (
     <div className="my-8 p-6 rounded-xl border border-border/50 bg-secondary/20">

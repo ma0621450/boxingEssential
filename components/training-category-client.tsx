@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { client } from "@/lib/sanity";
-import { getTutorialsByCategory } from "@/lib/tutorial-queries";
-import { mapSanityTutorials, type Tutorial } from "@/lib/tutorial";
-import { Blogs } from "@/lib/data";
-import { VideoModal } from "@/components/video-modal";
+import { useState } from "react";
+import type { Tutorial } from "@/lib/tutorial";
+import { getCategoryLabel } from "@/lib/tutorial";
 import { TrainingRequestForm } from "@/components/training-request-form";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ArticleCard } from "@/components/article-card";
@@ -23,23 +20,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+type RelatedBlog = {
+  _id: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  publishedAt?: string;
+  category?: string;
+  mainImage?: { asset?: { url?: string }; alt?: string };
+  author?: { name?: string };
+};
+
 interface TrainingCategoryClientProps {
   category: "gym" | "boxing" | "fitness";
+  categoryVideos: Tutorial[];
+  relatedBlogs: RelatedBlog[];
 }
 
-export function TrainingCategoryClient({ category }: TrainingCategoryClientProps) {
+export function TrainingCategoryClient({
+  category,
+  categoryVideos,
+  relatedBlogs,
+}: TrainingCategoryClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeVideoSlug, setActiveVideoSlug] = useState<string | null>(null);
-  const [categoryVideos, setCategoryVideos] = useState<Tutorial[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    client
-      .fetch(getTutorialsByCategory, { category })
-      .then((data) => setCategoryVideos(mapSanityTutorials(data)))
-      .catch(console.error)
-      .finally(() => setIsLoading(false));
-  }, [category]);
 
   const featuredVideo =
     categoryVideos.find((v) => v.featured) ?? categoryVideos[0] ?? null;
@@ -48,38 +51,6 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
   const totalPages = Math.max(1, Math.ceil(categoryVideos.length / videosPerPage));
   const startIndex = (currentPage - 1) * videosPerPage;
   const paginatedVideos = categoryVideos.slice(startIndex, startIndex + videosPerPage);
-
-  useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname;
-      if (path.startsWith("/videos/")) {
-        setActiveVideoSlug(path.split("/videos/")[1]);
-      } else {
-        setActiveVideoSlug(null);
-      }
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const handleOpenModal = (slug: string) => {
-    setActiveVideoSlug(slug);
-    window.history.pushState({ videoSlug: slug }, "", `/videos/${slug}`);
-  };
-
-  const handleCloseModal = () => {
-    setActiveVideoSlug(null);
-    window.history.pushState(null, "", `/training/${category}`);
-  };
-
-  const handleNavigateModal = (slug: string) => {
-    setActiveVideoSlug(slug);
-    window.history.pushState({ videoSlug: slug }, "", `/videos/${slug}`);
-  };
-
-  const activeVideo = activeVideoSlug
-    ? categoryVideos.find((v) => v.slug === activeVideoSlug)
-    : null;
 
   const categoryDetails = {
     gym: {
@@ -111,21 +82,6 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
     },
   }[category];
 
-  const relatedBlogs = {
-    gym: Blogs.filter(
-      (b) => b.slug === "boxing-workout-beginners" || b.slug === "boxing-cardio-workout"
-    ),
-    boxing: Blogs.filter(
-      (b) =>
-        b.slug === "how-to-jab" ||
-        b.slug === "boxing-stance-guide" ||
-        b.slug === "counter-fighting-guide"
-    ),
-    fitness: Blogs.filter(
-      (b) => b.slug === "boxing-cardio-workout" || b.slug === "boxing-diet-plan"
-    ),
-  }[category];
-
   const CategoryIcon = categoryDetails.icon;
 
   return (
@@ -133,18 +89,16 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
       <Breadcrumbs items={[{ label: categoryDetails.title }]} />
 
       <section className="mt-6 mb-16">
-        {isLoading ? (
-          <div className="text-center py-20 text-muted-foreground">Loading tutorials...</div>
-        ) : !featuredVideo ? (
+        {!featuredVideo ? (
           <div className="text-center py-20 text-muted-foreground">
             No tutorials found for this category.
           </div>
         ) : (
           <div className="bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-12">
-              <div
-                className="lg:col-span-7 relative aspect-video bg-black cursor-pointer group"
-                onClick={() => handleOpenModal(featuredVideo.slug)}
+              <Link
+                href={`/videos/${featuredVideo.slug}`}
+                className="lg:col-span-7 relative aspect-video bg-black cursor-pointer group block"
               >
                 <Image
                   src={featuredVideo.thumbnail}
@@ -166,7 +120,7 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
                 <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur px-3 py-1 rounded text-xs font-mono text-white">
                   {featuredVideo.duration} · {featuredVideo.views} views
                 </div>
-              </div>
+              </Link>
 
               <div className="lg:col-span-5 p-8 md:p-10 flex flex-col justify-center text-white">
                 <span
@@ -190,13 +144,12 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
                   <h4 className="text-base md:text-lg font-bold text-zinc-100 mt-1 line-clamp-2">
                     {featuredVideo.title}
                   </h4>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenModal(featuredVideo.slug)}
+                  <Link
+                    href={`/videos/${featuredVideo.slug}`}
                     className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-red-600/10"
                   >
                     Watch Class <Play className="h-3.5 w-3.5 fill-current" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -223,10 +176,10 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {paginatedVideos.map((vid) => (
-            <div
+            <Link
               key={vid.slug}
-              className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 group flex flex-col cursor-pointer"
-              onClick={() => handleOpenModal(vid.slug)}
+              href={`/videos/${vid.slug}`}
+              className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 group flex flex-col"
             >
               <div className="relative aspect-video bg-black shrink-0">
                 <Image
@@ -265,7 +218,7 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
                   <Calendar className="h-3.5 w-3.5" /> Published {vid.date}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -312,38 +265,32 @@ export function TrainingCategoryClient({ category }: TrainingCategoryClientProps
         <TrainingRequestForm defaultType={categoryDetails.formType} />
       </section>
 
-      <section className="border-t border-border/60 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">
-              Highly Relevant Guides
-            </h2>
-            <p className="text-muted-foreground text-sm mt-1">
-              Expand your training knowledge with deep-dive written articles.
-            </p>
+      {relatedBlogs.length > 0 && (
+        <section className="border-t border-border/60 py-16">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">
+                Relevant Blogs
+              </h2>
+              <p className="text-muted-foreground text-sm mt-1">
+                Latest articles matched to this training school.
+              </p>
+            </div>
+            <Link
+              href={`/blog?category=${encodeURIComponent(getCategoryLabel(category))}`}
+              className="flex items-center gap-1.5 text-red-600 hover:text-red-700 text-sm font-bold transition-colors"
+            >
+              All Blogs <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <Link
-            href="/blog"
-            className="flex items-center gap-1.5 text-red-600 hover:text-red-700 text-sm font-bold transition-colors"
-          >
-            All Blogs <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {relatedBlogs.map((blog) => (
-            <ArticleCard key={blog.slug} article={blog} />
-          ))}
-        </div>
-      </section>
-
-      {activeVideo && (
-        <VideoModal
-          video={activeVideo}
-          allCategoryVideos={categoryVideos}
-          onClose={handleCloseModal}
-          onNavigate={handleNavigateModal}
-        />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedBlogs.map((blog) => (
+              <ArticleCard key={blog._id} article={blog} />
+            ))}
+          </div>
+        </section>
       )}
+
     </div>
   );
 }

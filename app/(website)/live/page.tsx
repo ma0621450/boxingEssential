@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import liveBg from "@/public/livematch.jpg";
 
 export default function LivePage() {
     const isLive = false;
@@ -11,25 +13,35 @@ export default function LivePage() {
         sponsor: "Elite Boxing Promotions",
     };
 
-    const affiliateProducts = [
-        {
-            id: 1,
-            title: "Pro Training Boxing Gloves",
-            description:
-                "Premium gloves designed for sparring, heavy bag work, and advanced training.",
-        },
-        {
-            id: 2,
-            title: "Professional Hand Wraps",
-            description:
-                "Comfortable and durable wraps for daily boxing sessions and protection.",
-        },
-    ];
+    // const affiliateProducts = [
+    //     {
+    //         id: 1,
+    //         title: "Pro Training Boxing Gloves",
+    //         description:
+    //             "Premium gloves designed for sparring, heavy bag work, and advanced training.",
+    //     },
+    //     {
+    //         id: 2,
+    //         title: "Professional Hand Wraps",
+    //         description:
+    //             "Comfortable and durable wraps for daily boxing sessions and protection.",
+    //     },
+    // ];
 
     return (
         <main className="min-h-screen bg-black text-white">
-            <section className="border-b border-zinc-900">
-                <div className="mx-auto max-w-6xl px-6 py-24 text-center">
+            <section className="relative overflow-hidden border-b border-zinc-900">
+                <Image
+                    src={liveBg}
+                    alt=""
+                    fill
+                    className="object-cover object-center"
+                    sizes="100vw"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/80" />
+
+                <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 text-center drop-shadow-lg">
 
                     <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
                         Live Boxing Streams & Sponsored Events
@@ -126,7 +138,7 @@ export default function LivePage() {
                         </div>
 
                         <div className="grid gap-5 md:grid-cols-2">
-                            {affiliateProducts.map((product) => (
+                            {/* {affiliateProducts.map((product) => (
                                 <div
                                     key={product.id}
                                     className="group rounded-2xl border border-zinc-800 bg-zinc-900 p-5 transition hover:border-red-500/50"
@@ -145,7 +157,7 @@ export default function LivePage() {
                                         Check Price
                                     </button>
                                 </div>
-                            ))}
+                            ))} */}
                         </div>
                     </div>
 

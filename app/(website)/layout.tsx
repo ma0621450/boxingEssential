@@ -59,6 +59,6 @@ export default function RootLayout({
           <Footer />
         </PageTransitionProvider>
       </body>
-    </html >
+    </html>
   );
 }
