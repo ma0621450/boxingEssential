@@ -59,6 +59,11 @@ export async function GET() {
       changeFrequency: "monthly",
     },
     {
+      path: "/sitemap",
+      priority: 0.4,
+      changeFrequency: "weekly",
+    },
+    {
       path: "/privacy-policy",
       priority: 0.3,
       changeFrequency: "yearly",

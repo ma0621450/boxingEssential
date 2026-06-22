@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity";
+import { sitemapImageXml } from "@/lib/site-image-url";
 import { groq } from "next-sanity";
 
 export const revalidate = 3600;
@@ -52,15 +53,7 @@ ${tutorials
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
 
-        ${
-          tutorial.imageUrl
-            ? `
-        <image:image>
-            <image:loc>${tutorial.imageUrl}</image:loc>
-        </image:image>
-        `
-            : ""
-        }
+        ${sitemapImageXml(tutorial.imageUrl)}
     </url>
 `
   )
