@@ -10,7 +10,8 @@ const getAllTutorialSlugsForSitemap = groq`
     "slug": slug.current,
     _updatedAt,
     publishedAt,
-    "imageUrl": thumbnail.asset->url
+    "imageAlt": thumbnail.alt,
+    "hasImage": defined(thumbnail.asset)
   }
 `;
 
@@ -21,7 +22,8 @@ export async function GET() {
     slug: string;
     _updatedAt: string;
     publishedAt: string;
-    imageUrl: string | null;
+    imageAlt: string | null;
+    hasImage: boolean;
   }[] = [];
 
   try {
@@ -53,7 +55,11 @@ ${tutorials
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
 
-        ${sitemapImageXml(tutorial.imageUrl)}
+        ${
+          tutorial.hasImage
+            ? sitemapImageXml({ alt: tutorial.imageAlt, fallbackSlug: tutorial.slug })
+            : ""
+        }
     </url>
 `
   )

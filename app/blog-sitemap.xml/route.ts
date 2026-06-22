@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity";
-import { escapeXml, sitemapImageXml } from "@/lib/site-image-url";
+import { sitemapImageXml } from "@/lib/site-image-url";
 import { groq } from "next-sanity";
 
 export const revalidate = 3600;
@@ -10,7 +10,8 @@ const getAllPostSlugsForSitemap = groq`
     "slug": slug.current,
     _updatedAt,
     publishedAt,
-    "imageUrl": mainImage.asset->url
+    "imageAlt": mainImage.alt,
+    "hasImage": defined(mainImage.asset)
   }
 `;
 
@@ -21,7 +22,8 @@ export async function GET() {
     slug: string;
     _updatedAt: string;
     publishedAt: string;
-    imageUrl: string | null;
+    imageAlt: string | null;
+    hasImage: boolean;
   }[] = [];
 
   try {
@@ -54,7 +56,11 @@ ${posts
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
 
-        ${sitemapImageXml(post.imageUrl)}
+        ${
+          post.hasImage
+            ? sitemapImageXml({ alt: post.imageAlt, fallbackSlug: post.slug })
+            : ""
+        }
     </url>
 `
   )

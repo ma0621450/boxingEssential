@@ -1,37 +1,22 @@
 import { SITE_BASE_URL } from "./sitemap-data";
+import { slugify } from "./slugify";
 
-/**
- * Rewrites remote CDN image URLs to this site's domain via Next.js image optimization.
- * Local /public paths are returned as absolute site URLs.
- */
-export function toSiteImageUrl(
-  imageUrl: string | null | undefined,
-  width = 1200
-): string | null {
-  if (!imageUrl?.trim()) return null;
+type SiteImagePathOptions = {
+  alt?: string | null;
+  fallbackSlug: string;
+};
 
-  const trimmed = imageUrl.trim();
+/** Builds a site URL path from image alt text, e.g. /boxing-nutrition-plan */
+export function toSiteImagePath({ alt, fallbackSlug }: SiteImagePathOptions): string {
+  const label = alt?.trim() || fallbackSlug;
+  const slug = slugify(label) || slugify(fallbackSlug);
+  return `/${slug}`;
+}
 
-  if (trimmed.startsWith("/")) {
-    return `${SITE_BASE_URL}${trimmed}`;
-  }
-
-  try {
-    const { hostname } = new URL(trimmed);
-    if (hostname === "www.boxingessential.com" || hostname === "boxingessential.com") {
-      return trimmed;
-    }
-  } catch {
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    url: trimmed,
-    w: String(width),
-    q: "75",
-  });
-
-  return `${SITE_BASE_URL}/_next/image?${params.toString()}`;
+export function toSiteImageUrl(options: SiteImagePathOptions): string | null {
+  const path = toSiteImagePath(options);
+  if (path === "/") return null;
+  return `${SITE_BASE_URL}${path}`;
 }
 
 export function escapeXml(value: string): string {
@@ -43,8 +28,8 @@ export function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export function sitemapImageXml(imageUrl: string | null | undefined): string {
-  const siteImage = toSiteImageUrl(imageUrl);
+export function sitemapImageXml(options: SiteImagePathOptions): string {
+  const siteImage = toSiteImageUrl(options);
   if (!siteImage) return "";
 
   return `
