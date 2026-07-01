@@ -1,3 +1,4 @@
+import { ThumbnailPreviewInput } from "../components/ThumbnailPreviewInput";
 import { YoutubeUrlInput } from "../components/YoutubeUrlInput";
 
 const categoryOptions = [
@@ -59,11 +60,18 @@ export default {
     },
     {
       name: "thumbnail",
-      title: "Thumbnail (optional)",
+      title: "Thumbnail",
       type: "image",
-      description: "Recommended. A site placeholder is used if empty.",
+      readOnly: true,
+      description:
+        "Required. Auto-filled from the YouTube URL when you paste or change the video link.",
       options: { hotspot: true },
-      fields: [{ name: "alt", type: "string", title: "Alt text" }],
+      components: { input: ThumbnailPreviewInput },
+      fields: [{ name: "alt", type: "string", title: "Alt text", readOnly: true }],
+      validation: (Rule: any) =>
+        Rule.required().error(
+          "Add a YouTube URL above and wait for the thumbnail to load."
+        ),
     },
     {
       name: "duration",

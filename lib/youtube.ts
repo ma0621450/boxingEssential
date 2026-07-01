@@ -17,6 +17,31 @@ export function getYoutubeEmbedUrl(url: string): string {
   return id ? `https://www.youtube.com/embed/${id}` : url;
 }
 
+const YOUTUBE_THUMBNAIL_QUALITIES = [
+  "maxresdefault",
+  "hqdefault",
+  "mqdefault",
+] as const;
+
+/** Fetches the best available YouTube thumbnail for a video ID. */
+export async function fetchYoutubeThumbnail(
+  videoId: string
+): Promise<ArrayBuffer | null> {
+  for (const quality of YOUTUBE_THUMBNAIL_QUALITIES) {
+    const url = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+    const res = await fetch(url, { next: { revalidate: 86400 } });
+    if (!res.ok) continue;
+
+    const buffer = await res.arrayBuffer();
+    // maxresdefault returns a tiny placeholder when no high-res thumb exists
+    if (quality === "maxresdefault" && buffer.byteLength < 5000) continue;
+
+    return buffer;
+  }
+
+  return null;
+}
+
 /** Converts YouTube API ISO 8601 duration (e.g. PT10M24S) to M:SS or H:MM:SS */
 export function formatIso8601Duration(iso: string): string {
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);

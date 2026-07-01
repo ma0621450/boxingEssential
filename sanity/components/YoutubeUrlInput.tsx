@@ -6,65 +6,98 @@ import type { StringInputProps } from "sanity";
 import { useClient, useFormValue } from "sanity";
 import { getYoutubeId } from "@/lib/youtube";
 
+type SyncStatus = "idle" | "loading" | "done" | "error";
+
 export function YoutubeUrlInput(props: StringInputProps) {
   const { renderDefault, value } = props;
   const client = useClient({ apiVersion: "2024-01-01" });
   const documentId = useFormValue(["_id"]) as string | undefined;
+  const title = useFormValue(["title"]) as string | undefined;
 
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<SyncStatus>("idle");
   const [message, setMessage] = useState("");
   const lastFetchedUrl = useRef("");
 
-  const fetchAndSaveDuration = useCallback(
+  const syncFromYoutube = useCallback(
     async (url: string) => {
       if (!url || url === lastFetchedUrl.current) return;
       if (!getYoutubeId(url)) return;
+
+      if (!documentId) {
+        setStatus("error");
+        setMessage("Save the draft first, then paste the YouTube URL again.");
+        return;
+      }
 
       lastFetchedUrl.current = url;
       setStatus("loading");
       setMessage("");
 
       try {
-        const res = await fetch(
-          `/api/youtube-duration?url=${encodeURIComponent(url)}`
-        );
+        const res = await fetch("/api/youtube-sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch duration");
+          throw new Error(data.error || "Failed to sync from YouTube");
         }
 
-        if (documentId && data.duration) {
-          await client.patch(documentId).set({ duration: data.duration }).commit();
-          setStatus("done");
-          setMessage(`Duration updated: ${data.duration}`);
+        const patch = client.patch(documentId);
+
+        if (data.duration) {
+          patch.set({ duration: data.duration });
         }
+
+        if (data.assetId) {
+          patch.set({
+            thumbnail: {
+              _type: "image",
+              asset: { _type: "reference", _ref: data.assetId },
+              alt: title?.trim() || "Video thumbnail",
+            },
+          });
+        }
+
+        await patch.commit();
+
+        const parts: string[] = [];
+        if (data.duration) parts.push(`duration ${data.duration}`);
+        if (data.assetId) parts.push("thumbnail");
+
+        setStatus("done");
+        setMessage(
+          parts.length
+            ? `Updated from YouTube: ${parts.join(" and ")}.`
+            : "Synced from YouTube."
+        );
       } catch (err) {
         lastFetchedUrl.current = "";
         setStatus("error");
         setMessage(
-          err instanceof Error ? err.message : "Could not fetch duration"
+          err instanceof Error ? err.message : "Could not sync from YouTube"
         );
       }
     },
-    [client, documentId]
+    [client, documentId, title]
   );
 
   useEffect(() => {
     const url = typeof value === "string" ? value.trim() : "";
     if (!url || !getYoutubeId(url)) {
       setStatus("idle");
+      lastFetchedUrl.current = "";
       return;
     }
 
     const timer = setTimeout(() => {
-      fetchAndSaveDuration(url);
+      syncFromYoutube(url);
     }, 700);
 
     return () => clearTimeout(timer);
-  }, [value, fetchAndSaveDuration]);
+  }, [value, syncFromYoutube]);
 
   return (
     <Stack space={3}>
@@ -72,7 +105,7 @@ export function YoutubeUrlInput(props: StringInputProps) {
       {status === "loading" && (
         <Box paddingY={1}>
           <Text size={1} muted>
-            <Spinner muted /> Fetching duration from YouTube…
+            <Spinner muted /> Fetching duration and thumbnail from YouTube…
           </Text>
         </Box>
       )}
@@ -82,7 +115,10 @@ export function YoutubeUrlInput(props: StringInputProps) {
         </Text>
       )}
       {status === "error" && (
-        <Text size={1} style={{ color: "var(--card-badge-critical-fg-color, #c00)" }}>
+        <Text
+          size={1}
+          style={{ color: "var(--card-badge-critical-fg-color, #c00)" }}
+        >
           {message}
         </Text>
       )}
