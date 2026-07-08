@@ -19,9 +19,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  verification: {
-    google: "5RvZNo1YT849c8qyWwmvkVj8POYL970zvCXZj5jg0Hk",
-  },
 };
 
 export default function RootLayout({
@@ -31,6 +28,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="WxCS_oqTvFze8jQk_-CnLMrUDsP2ZZ_xtIDeagY8FAo"
+        />
+      </head>
       <body className={`${poppins.className} min-h-screen flex flex-col`}>
         <PageTransitionProvider>
           <Navbar />
