@@ -15,33 +15,12 @@ export const metadata: Metadata = {
   },
   description:
     "Your complete resource for boxing training, nutrition, gear reviews, and fight strategy. Expert-backed content for every level.",
-  keywords: [
-    "boxing",
-    "boxing training",
-    "boxing gloves",
-    "boxing workouts",
-    "boxing nutrition",
-    "fight strategy",
-    "boxing gear reviews",
-    "boxing for beginners",
-  ],
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "Boxing Essential",
-    title: "Boxing Essential - Train Smarter. Fight Better. Stay Stronger.",
-    description:
-      "Your complete resource for boxing training, nutrition, gear reviews, and fight strategy.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Boxing Essential",
-    description:
-      "Your complete resource for boxing training, nutrition, gear reviews, and fight strategy.",
-  },
   robots: {
     index: true,
     follow: true,
+  },
+  verification: {
+    google: "WxCS_oqTvFze8jQk_-CnLMrUDsP2ZZ_xtlDeagY8FAo",
   },
 };
 
