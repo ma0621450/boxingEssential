@@ -6,7 +6,7 @@ import { groq } from "next-sanity";
 export const revalidate = 3600;
 
 const getAllPostSlugsForSitemap = groq`
-  *[_type == "post" && defined(slug.current)] {
+  *[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())] {
     "slug": slug.current,
     _updatedAt,
     publishedAt,
@@ -16,7 +16,7 @@ const getAllPostSlugsForSitemap = groq`
 `;
 
 export async function GET() {
-  const baseUrl = "https://www.boxingessential.com";
+  const baseUrl = "https://boxingessential.com";
 
   let posts: {
     slug: string;

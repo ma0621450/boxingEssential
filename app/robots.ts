@@ -8,10 +8,10 @@ export default function robots() {
       },
     ],
     sitemap: [
-      "https://www.boxingessential.com/sitemap.xml",
-      "https://www.boxingessential.com/static-sitemap.xml",
-      "https://www.boxingessential.com/blog-sitemap.xml",
-      "https://www.boxingessential.com/video-sitemap.xml",
+      "https://boxingessential.com/sitemap.xml",
+      "https://boxingessential.com/static-sitemap.xml",
+      "https://boxingessential.com/blog-sitemap.xml",
+      "https://boxingessential.com/video-sitemap.xml",
     ],
   };
 }

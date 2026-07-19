@@ -18,7 +18,7 @@ const RESERVED_SINGLE_SEGMENTS = new Set([
   "videos",
 ]);
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const extensionMatch = pathname.match(/^\/([^/]+)\.(jpg|jpeg|webp|png)$/i);

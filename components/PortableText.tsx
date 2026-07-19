@@ -1,12 +1,13 @@
 import { PortableText as BasePortableText } from '@portabletext/react';
 import { urlFor } from '@/lib/sanity';
 import Image from 'next/image';
+import { slugifyHeading } from '@/lib/extract-toc';
 
 const components = {
   block: {
     h2: ({ children, value }: any) => {
       const text = value?.children?.map((child: any) => child.text).join('') || '';
-      const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      const id = value?.headingId || slugifyHeading(text);
       return (
         <h2 id={id} className="text-white text-3xl mt-16 mb-8 scroll-mt-32">
           {children}
@@ -15,7 +16,7 @@ const components = {
     },
     h3: ({ children, value }: any) => {
       const text = value?.children?.map((child: any) => child.text).join('') || '';
-      const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      const id = value?.headingId || slugifyHeading(text);
       return (
         <h3 id={id} className="text-white text-2xl mt-12 mb-6 scroll-mt-32">
           {children}
@@ -40,14 +41,14 @@ const components = {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 800px, 1200px"
         />
       </div>
-    ), 
+    ),
     htmlEmbed: ({ value }: any) => {
       return (
         <div
           className="my-10 overflow-x-auto"
           dangerouslySetInnerHTML={{ __html: value.code }}
         />
-      )
+      );
     },
   },
   marks: {

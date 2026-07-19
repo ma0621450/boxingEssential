@@ -1,15 +1,15 @@
 export default function sitemap() {
   return [
     {
-      url: "https://www.boxingessential.com/static-sitemap.xml",
+      url: "https://boxingessential.com/static-sitemap.xml",
       lastModified: new Date(),
     },
     {
-      url: "https://www.boxingessential.com/blog-sitemap.xml",
+      url: "https://boxingessential.com/blog-sitemap.xml",
       lastModified: new Date(),
     },
     {
-      url: "https://www.boxingessential.com/video-sitemap.xml",
+      url: "https://boxingessential.com/video-sitemap.xml",
       lastModified: new Date(),
     },
   ];

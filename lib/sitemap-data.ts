@@ -1,6 +1,6 @@
 import { groq } from "next-sanity";
 
-export const SITE_BASE_URL = "https://www.boxingessential.com";
+export const SITE_BASE_URL = "https://boxingessential.com";
 
 export type SitemapLink = {
   href: string;
@@ -49,7 +49,7 @@ export const STATIC_SITEMAP_SECTIONS: SitemapSection[] = [
 ];
 
 export const getSitemapPosts = groq`
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+  *[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc) {
     title,
     "slug": slug.current,
     category

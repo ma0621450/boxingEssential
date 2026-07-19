@@ -29,6 +29,8 @@ export default {
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
+      description:
+        'Schedule posts by setting a future date, then Publish. The post stays hidden on the site until that time (pages revalidate about hourly).',
       initialValue: () => new Date().toISOString(),
     },
     {

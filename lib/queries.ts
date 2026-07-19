@@ -1,5 +1,8 @@
 import { groq } from 'next-sanity';
 
+/** Hide posts scheduled for the future; keep legacy posts without a date. */
+const isLive = `(!defined(publishedAt) || publishedAt <= now())`;
+
 // ─── Blog Queries (excludes News) ────────────────────────────
 
 export const getPaginatedBlogs = groq`
@@ -7,6 +10,7 @@ export const getPaginatedBlogs = groq`
     _type == "post" && 
     category != "News" && 
     defined(slug.current) &&
+    ${isLive} &&
     (
       $category == "ALL" || 
       category == $category
@@ -36,6 +40,7 @@ export const getBlogsCount = groq`
     _type == "post" && 
     category != "News" && 
     defined(slug.current) &&
+    ${isLive} &&
     (
       $category == "ALL" || 
       category == $category
@@ -46,7 +51,7 @@ export const getBlogsCount = groq`
 // ─── Single Post by Slug ──────────────────────────────────────
 
 export const getPostBySlug = groq`
-  *[_type == "post" && slug.current == $slug][0] {
+  *[_type == "post" && slug.current == $slug && ${isLive}][0] {
     _id,
     title,
     "slug": slug.current,
@@ -100,7 +105,7 @@ export const getPostBySlug = groq`
 // ─── Related Posts ────────────────────────────────────────────
 
 export const getBlogCategories = groq`
-  array::unique(*[_type == "post" && category != "News" && defined(category)].category)
+  array::unique(*[_type == "post" && category != "News" && defined(category) && ${isLive}].category)
 `;
 
 export const getAffiliateProductCategories = groq`
@@ -124,7 +129,8 @@ export const getBlogsByTrainingCategory = groq`
     _type == "post" &&
     category != "News" &&
     category == $category &&
-    defined(slug.current)
+    defined(slug.current) &&
+    ${isLive}
   ] | order(publishedAt desc) [0..2] {
     _id,
     title,
@@ -150,7 +156,8 @@ export const getRelatedPosts = groq`
     _type == "post" && 
     category == $category && 
     slug.current != $slug &&
-    defined(slug.current)
+    defined(slug.current) &&
+    ${isLive}
   ] | order(publishedAt desc) [0..3] {
     _id,
     title,
@@ -174,7 +181,8 @@ export const getPaginatedNews = groq`
   *[
     _type == "post" && 
     category == "News" &&
-    defined(slug.current)
+    defined(slug.current) &&
+    ${isLive}
   ] | order(publishedAt desc) [$start..$end] {
     _id,
     title,
@@ -197,7 +205,8 @@ export const getNewsCount = groq`
   count(*[
     _type == "post" && 
     category == "News" &&
-    defined(slug.current)
+    defined(slug.current) &&
+    ${isLive}
   ])
 `;
 
@@ -304,7 +313,7 @@ export { getTutorialsByCategory } from "./tutorial-queries";
 // ─── Sitemap (for SEO) ────────────────────────────────────────
 
 export const getAllPostSlugs = groq`
-  *[_type == "post" && defined(slug.current)] {
+  *[_type == "post" && defined(slug.current) && ${isLive}] {
     "slug": slug.current,
     _updatedAt,
     category
@@ -318,6 +327,7 @@ export const searchBlogs = groq`
     _type == "post" && 
     category != "News" &&
     defined(slug.current) &&
+    ${isLive} &&
     (
       title match $query
       || excerpt match $query
@@ -357,6 +367,7 @@ export const searchBlogsCount = groq`
     _type == "post" && 
     category != "News" &&
     defined(slug.current) &&
+    ${isLive} &&
     (
       title match $query
       || excerpt match $query
@@ -374,6 +385,7 @@ export const searchNews = groq`
     _type == "post" && 
     category == "News" &&
     defined(slug.current) &&
+    ${isLive} &&
     (
       title match $query
       || excerpt match $query
@@ -411,6 +423,7 @@ export const searchNewsCount = groq`
     _type == "post" && 
     category == "News" &&
     defined(slug.current) &&
+    ${isLive} &&
     (
       title match $query
       || excerpt match $query

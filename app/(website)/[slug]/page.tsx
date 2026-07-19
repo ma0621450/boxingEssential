@@ -11,14 +11,14 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/queries";
 import { groq } from "next-sanity";
 import { ArticleContent } from "@/components/article-content";
 import { AdBanner } from "@/components/ad-banner";
-import { extractTOC, injectHeadingIds } from "@/lib/extract-toc";
+import { extractTOC, extractTOCFromPortableText, injectHeadingIds, assignPortableTextHeadingIds } from "@/lib/extract-toc";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
 import { normalizeArticleHtml } from "@/lib/normalize-article-html";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const query = groq`*[_type == "post" && defined(slug.current)][].slug.current`;
+  const query = groq`*[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())][].slug.current`;
   const slugs = await serverClient.fetch(query);
   return slugs.map((slug: string) => ({ slug }));
 }
@@ -69,7 +69,12 @@ export default async function PostPage({
     : PLACEHOLDER_IMAGE;
   const dateStr = article.publishedAt || new Date().toISOString();
 
-  const tocItems = article.rawHtml ? extractTOC(article.rawHtml) : [];
+  const portableContent = Array.isArray(article.content)
+    ? assignPortableTextHeadingIds(article.content)
+    : article.content;
+  const tocItems = article.rawHtml
+    ? extractTOC(article.rawHtml)
+    : extractTOCFromPortableText(portableContent);
   const processedHtml = article.rawHtml
     ? normalizeArticleHtml(injectHeadingIds(article.rawHtml))
     : null;
@@ -164,7 +169,7 @@ export default async function PostPage({
               <div className="prose-boxing">
                 <ArticleContent
                   processedHtml={processedHtml}
-                  content={article.content}
+                  content={portableContent}
                 />
               </div>
 
@@ -298,7 +303,7 @@ export default async function PostPage({
             <div className="prose-boxing">
               <ArticleContent
                 processedHtml={processedHtml}
-                content={article.content}
+                content={portableContent}
               />
             </div>
 

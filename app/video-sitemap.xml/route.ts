@@ -16,7 +16,7 @@ const getAllTutorialSlugsForSitemap = groq`
 `;
 
 export async function GET() {
-  const baseUrl = "https://www.boxingessential.com";
+  const baseUrl = "https://boxingessential.com";
 
   let tutorials: {
     slug: string;

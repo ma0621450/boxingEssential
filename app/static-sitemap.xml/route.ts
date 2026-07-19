@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const revalidate = 3600;
 
 export async function GET() {
-  const baseUrl = "https://www.boxingessential.com";
+  const baseUrl = "https://boxingessential.com";
 
   const currentDate = new Date();
 

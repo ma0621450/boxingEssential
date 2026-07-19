@@ -127,30 +127,36 @@
 
 /* ── Table styles ────────────────────────────────────────────── */
 .prose-boxing table,
-.prose-boxing .wp-table {
+.prose-boxing .wp-table,
+.blog-table {
   @apply w-full border-collapse text-sm mb-8 overflow-hidden rounded-lg;
   display: block;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.prose-boxing thead {
+.prose-boxing thead,
+.blog-table thead {
   @apply bg-primary/10;
 }
 
-.prose-boxing th {
+.prose-boxing th,
+.blog-table th {
   @apply px-4 py-3 text-left font-bold text-sm border border-border/50;
 }
 
-.prose-boxing td {
+.prose-boxing td,
+.blog-table td {
   @apply px-4 py-3 text-sm border border-border/50 align-top;
 }
 
-.prose-boxing tr:nth-child(even) {
+.prose-boxing tr:nth-child(even),
+.blog-table tr:nth-child(even) {
   @apply bg-secondary/5;
 }
 
-.prose-boxing tr:hover {
+.prose-boxing tr:hover,
+.blog-table tr:hover {
   @apply bg-secondary/10 transition-colors;
 }
 

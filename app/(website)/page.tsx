@@ -28,7 +28,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-[100vh] overflow-hidden">
+      <section className="relative h-dvh min-h-dvh overflow-hidden">
 
   {/* BACKGROUND VIDEO */}
   <video
@@ -37,7 +37,7 @@ export default async function HomePage() {
     loop
     muted
     playsInline
-    className="absolute inset-0 w-full object-cover object-center scale-105 -z-20"
+    className="absolute inset-0 h-full w-full object-cover object-center scale-105 -z-20"
   />
 
   {/* DARK GRADIENT OVERLAY */}
@@ -47,7 +47,7 @@ export default async function HomePage() {
   {/* <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 -z-10" /> */}
 
   {/* MAIN CONTENT */}
-  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 h-full flex items-center">
 
     <div className="max-w-3xl">
 
