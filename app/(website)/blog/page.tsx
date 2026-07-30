@@ -5,9 +5,11 @@ import { BlogFilters } from "@/components/blog-filters";
 import { Pagination } from "@/components/pagination";
 import { SearchBar } from "@/components/search-bar";
 import { BlogPageClient } from "@/components/blog-page-client";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
 export const revalidate = 3600;
 const POSTS_PER_PAGE = 12;
+const BLOG_CANONICAL = `${SITE_BASE_URL}/blog`;
 
 export async function generateMetadata({
   searchParams,
@@ -22,6 +24,7 @@ export async function generateMetadata({
     return {
       title: `Search: ${searchQuery} | Boxing Essential`,
       description: `Search results for "${searchQuery}" on Boxing Essential.`,
+      alternates: { canonical: BLOG_CANONICAL },
     };
   }
 
@@ -32,6 +35,7 @@ export async function generateMetadata({
     description: categoryName
       ? `Browse all ${categoryName} articles on Boxing Essential.`
       : "Expert boxing content covering training, nutrition, gear, and strategy.",
+    alternates: { canonical: BLOG_CANONICAL },
   };
 }
 

@@ -14,6 +14,7 @@ import { AdBanner } from "@/components/ad-banner";
 import { extractTOC, extractTOCFromPortableText, injectHeadingIds, assignPortableTextHeadingIds } from "@/lib/extract-toc";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
 import { normalizeArticleHtml } from "@/lib/normalize-article-html";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
 export const revalidate = 3600;
 
@@ -37,15 +38,17 @@ export async function generateMetadata({
     ? urlFor(article.mainImage).url()
     : PLACEHOLDER_IMAGE;
 
-  const isNews = article.category?.toLowerCase() === "news";
+  const canonicalUrl = `${SITE_BASE_URL}/${slug}`;
 
   return {
     title: article.seo?.metaTitle || `${article.title} | Boxing Essential`,
     description: article.seo?.metaDescription || article.excerpt,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
+      url: canonicalUrl,
       publishedTime: article.publishedAt,
       authors: article.author ? [article.author.name] : [],
       images: [{ url: imageUrl }],
@@ -78,7 +81,7 @@ export default async function PostPage({
   const processedHtml = article.rawHtml
     ? normalizeArticleHtml(injectHeadingIds(article.rawHtml))
     : null;
-  const shareUrl = `https://boxingessential.com/${article.slug}`;
+  const shareUrl = `${SITE_BASE_URL}/${article.slug}`;
 
   const relatedPosts = await serverClient.fetch(getRelatedPosts, {
     category: article.category,

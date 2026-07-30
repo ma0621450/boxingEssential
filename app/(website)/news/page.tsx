@@ -14,6 +14,7 @@ const POSTS_PER_PAGE = 12;
 export const metadata: Metadata = {
   title: "Boxing News | Boxing Essential",
   description: "Latest boxing results, fight announcements, world rankings, and breaking news.",
+  alternates: { canonical: "https://boxingessential.com/news" },
 };
 
 export default async function NewsPage({
