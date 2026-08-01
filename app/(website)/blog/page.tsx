@@ -63,9 +63,12 @@ export default async function BlogPage({
     serverClient.fetch<string[]>(getBlogCategories),
   ]);
 
+  // "Live Match" is always shown, even before any post uses it
+  const uniqueCategories = Array.from(new Set([...categorySlugs, "Live Match"]));
+
   const categories = [
     { slug: "ALL", name: "All" },
-    ...categorySlugs.map((slug) => ({ slug, name: slug })),
+    ...uniqueCategories.map((slug) => ({ slug, name: slug })),
   ];
 
   const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);

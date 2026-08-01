@@ -64,6 +64,7 @@ export default {
           { title: 'Boxing Training', value: 'Boxing Training' },
           { title: 'Gym Training', value: 'Gym Training' },
           { title: 'Gear Reviews', value: 'Gear Reviews' },
+          { title: 'Live Match', value: 'Live Match' },
           { title: 'News', value: 'News' },
         ],
       },
