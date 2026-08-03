@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity';
 
-/** Hide posts scheduled for the future; keep legacy posts without a date. */
-const isLive = `(!defined(publishedAt) || publishedAt <= now())`;
+/** Exclude Sanity drafts and hide posts scheduled for the future; keep legacy posts without a date. */
+const isLive = `!(_id in path("drafts.**")) && (!defined(publishedAt) || publishedAt <= now())`;
 
 // ─── Blog Queries (excludes News) ────────────────────────────
 

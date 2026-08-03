@@ -6,6 +6,7 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   useCdn: process.env.NODE_ENV === 'production',
+  perspective: 'published',
 });
 
 export const serverClient = createClient({
@@ -14,6 +15,8 @@ export const serverClient = createClient({
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   useCdn: false,
   token: process.env.SANITY_API_TOKEN,
+  // Token can see drafts under older API defaults; keep production on published only.
+  perspective: 'published',
 });
 
 const builder = createImageUrlBuilder(client);

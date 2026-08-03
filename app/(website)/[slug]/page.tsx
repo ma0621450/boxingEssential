@@ -19,7 +19,7 @@ import { SITE_BASE_URL } from "@/lib/sitemap-data";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const query = groq`*[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())][].slug.current`;
+  const query = groq`*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**")) && (!defined(publishedAt) || publishedAt <= now())][].slug.current`;
   const slugs = await serverClient.fetch(query);
   return slugs.map((slug: string) => ({ slug }));
 }

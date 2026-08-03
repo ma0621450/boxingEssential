@@ -49,7 +49,7 @@ export const STATIC_SITEMAP_SECTIONS: SitemapSection[] = [
 ];
 
 export const getSitemapPosts = groq`
-  *[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc) {
+  *[_type == "post" && defined(slug.current) && !(_id in path("drafts.**")) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc) {
     title,
     "slug": slug.current,
     category

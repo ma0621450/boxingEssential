@@ -6,7 +6,7 @@ import { groq } from "next-sanity";
 export const revalidate = 3600;
 
 const getAllPostSlugsForSitemap = groq`
-  *[_type == "post" && defined(slug.current) && (!defined(publishedAt) || publishedAt <= now())] {
+  *[_type == "post" && defined(slug.current) && !(_id in path("drafts.**")) && (!defined(publishedAt) || publishedAt <= now())] {
     "slug": slug.current,
     _updatedAt,
     publishedAt,

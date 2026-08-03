@@ -3,7 +3,7 @@ import { serverClient } from "@/lib/sanity";
 import { slugify } from "@/lib/slugify";
 
 export const getPostImageSources = groq`
-  *[_type == "post" && defined(slug.current) && defined(mainImage.asset) && (!defined(publishedAt) || publishedAt <= now())] {
+  *[_type == "post" && defined(slug.current) && defined(mainImage.asset) && !(_id in path("drafts.**")) && (!defined(publishedAt) || publishedAt <= now())] {
     "slug": slug.current,
     "imageAlt": mainImage.alt,
     "imageUrl": mainImage.asset->url,
