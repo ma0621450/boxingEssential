@@ -18,6 +18,24 @@ const RESERVED_SINGLE_SEGMENTS = new Set([
   "videos",
 ]);
 
+/** Real files in /public — must not be rewritten to /api/image. */
+const PUBLIC_STATIC_IMAGES = new Set(
+  [
+    "aboutBg.jpg",
+    "aboutTrainingImg.jpg",
+    "boxerPuncher.jpg",
+    "counterPuncher.jpg",
+    "livematch.jpg",
+    "logo.png",
+    "mAli.png",
+    "mtyson.jpg",
+    "outBoxer.jpg",
+    "powerPuncher.jpg",
+    "SRR.jpg",
+    "swarmer.jpg",
+  ].map((name) => name.toLowerCase())
+);
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -30,6 +48,10 @@ export function proxy(request: NextRequest) {
 
   const extensionMatch = pathname.match(/^\/([^/]+)\.(jpg|jpeg|webp|png)$/i);
   if (extensionMatch) {
+    const filename = pathname.slice(1).toLowerCase();
+    if (PUBLIC_STATIC_IMAGES.has(filename)) {
+      return NextResponse.next();
+    }
     const [, slug] = extensionMatch;
     return NextResponse.rewrite(new URL(`/api/image/${slug}`, request.url));
   }

@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TableOfContents } from "@/components/table-of-contents";
 import { ShareDropdown } from "@/components/share-dropdown";
 import { ArticleCard } from "@/components/article-card";
-import { serverClient, urlFor } from "@/lib/sanity";
+import { serverClient, getSanityImageUrl } from "@/lib/sanity";
 import { getPostBySlug, getRelatedPosts } from "@/lib/queries";
 import { groq } from "next-sanity";
 import { ArticleContent } from "@/components/article-content";
@@ -34,9 +34,7 @@ export async function generateMetadata({
 
   if (!article) return { title: "Not Found" };
 
-  const imageUrl = article.mainImage
-    ? urlFor(article.mainImage).url()
-    : PLACEHOLDER_IMAGE;
+  const imageUrl = getSanityImageUrl(article.mainImage) || PLACEHOLDER_IMAGE;
 
   const canonicalUrl = `${SITE_BASE_URL}/${slug}`;
 
@@ -67,9 +65,7 @@ export default async function PostPage({
   if (!article) notFound();
 
   const isNews = article.category?.toLowerCase() === "news";
-  const imageUrl = article.mainImage
-    ? urlFor(article.mainImage).url()
-    : PLACEHOLDER_IMAGE;
+  const imageUrl = getSanityImageUrl(article.mainImage) || PLACEHOLDER_IMAGE;
   const dateStr = article.publishedAt || new Date().toISOString();
 
   const portableContent = Array.isArray(article.content)

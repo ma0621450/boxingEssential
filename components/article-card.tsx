@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar } from "lucide-react";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
-import { urlFor } from "@/lib/sanity";
+import { getSanityImageUrl } from "@/lib/sanity";
 
 export function ArticleCard({ article, featured = false }: { article: any; featured?: boolean }) {
   // Handle both old static mock data (category is object) and new Sanity data (category is string)
@@ -12,9 +12,10 @@ export function ArticleCard({ article, featured = false }: { article: any; featu
 
   const isNews = categoryName.toLowerCase() === "news";
   const href = article.slug;
-  const imageUrl = article.mainImage
-    ? urlFor(article.mainImage).url()
-    : article.featuredImage || PLACEHOLDER_IMAGE;
+  const imageUrl =
+    getSanityImageUrl(article.mainImage) ||
+    article.featuredImage ||
+    PLACEHOLDER_IMAGE;
   const dateStr = article.publishedAt || article.date;
 
   if (featured) {

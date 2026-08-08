@@ -24,3 +24,30 @@ const builder = createImageUrlBuilder(client);
 export function urlFor(source: any) {
   return builder.image(source);
 }
+
+/** True when source has a usable Sanity asset ref/id (not a broken/null expansion). */
+function hasImageAsset(source: any): boolean {
+  if (!source) return false;
+  if (typeof source === "string") return true;
+  return Boolean(
+    source.asset?._ref ||
+      source.asset?._id ||
+      source.asset?.url ||
+      source._ref ||
+      source._id
+  );
+}
+
+/**
+ * Safe image URL for CMS images. Handles missing mainImage, deleted assets
+ * (GROQ expands to `{ asset: null }`), and plain asset URLs from queries.
+ */
+export function getSanityImageUrl(source: any): string | null {
+  if (!hasImageAsset(source)) return null;
+  if (source?.asset?.url) return source.asset.url;
+  try {
+    return builder.image(source).url();
+  } catch {
+    return null;
+  }
+}

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
-import { urlFor } from "@/lib/sanity";
+import { getSanityImageUrl } from "@/lib/sanity";
 
 type RelatedPost = {
   slug: string;
   title: string;
   featuredImage?: string;
-  mainImage?: { asset?: { url?: string } };
+  mainImage?: { asset?: { url?: string } | null };
   category?: string | { name?: string };
 };
 
@@ -23,9 +23,10 @@ export function RelatedPosts({ posts }: { posts: RelatedPost[] }) {
             typeof article.category === "string"
               ? article.category
               : article.category?.name || "Uncategorized";
-          const imageUrl = article.mainImage
-            ? urlFor(article.mainImage).url()
-            : article.featuredImage || PLACEHOLDER_IMAGE;
+          const imageUrl =
+            getSanityImageUrl(article.mainImage) ||
+            article.featuredImage ||
+            PLACEHOLDER_IMAGE;
 
           return (
             <Link key={article.slug} href={`/${article.slug}`} className="group block">

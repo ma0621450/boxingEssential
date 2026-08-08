@@ -1,5 +1,5 @@
 import { PortableText as BasePortableText } from '@portabletext/react';
-import { urlFor } from '@/lib/sanity';
+import { getSanityImageUrl } from '@/lib/sanity';
 import Image from 'next/image';
 import { slugifyHeading } from '@/lib/extract-toc';
 
@@ -30,18 +30,22 @@ const components = {
     ),
   },
   types: {
-    image: ({ value }: any) => (
-      <div className="relative aspect-video w-full my-12 overflow-hidden rounded-sm border border-white/10">
-        <Image
-          src={urlFor(value).url()}
-          alt={value.alt || 'Content Image'}
-          title={value.originalFilename || value.alt || 'Content Image'}
-          fill
-          className="object-cover opacity-90"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 800px, 1200px"
-        />
-      </div>
-    ),
+    image: ({ value }: any) => {
+      const src = getSanityImageUrl(value);
+      if (!src) return null;
+      return (
+        <div className="relative aspect-video w-full my-12 overflow-hidden rounded-sm border border-white/10">
+          <Image
+            src={src}
+            alt={value.alt || 'Content Image'}
+            title={value.originalFilename || value.alt || 'Content Image'}
+            fill
+            className="object-cover opacity-90"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 800px, 1200px"
+          />
+        </div>
+      );
+    },
     htmlEmbed: ({ value }: any) => {
       return (
         <div
