@@ -33,7 +33,6 @@ export default function RootLayout({
           name="google-site-verification"
           content="WxCS_oqTvFze8jQk_-CnLMrUDsP2ZZ_xtIDeagY8FAo"
         />
-        <meta name="msvalidate.01" content="8015ceee26b17b33" />
       </head>
       <body className={`${poppins.className} min-h-screen flex flex-col`}>
         <PageTransitionProvider>
