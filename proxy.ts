@@ -41,9 +41,10 @@ export function proxy(request: NextRequest) {
 
   // Prefer non-trailing-slash URLs so Google consolidates duplicates
   if (pathname.length > 1 && pathname.endsWith("/")) {
-    const url = request.nextUrl.clone();
-    url.pathname = pathname.replace(/\/+$/, "") || "/";
-    return NextResponse.redirect(url, 308);
+    const destination = new URL(request.url);
+    destination.pathname = pathname.replace(/\/+$/, "") || "/";
+    // Absolute Location helps crawlers merge slash vs non-slash variants
+    return NextResponse.redirect(destination.toString(), 308);
   }
 
   const extensionMatch = pathname.match(/^\/([^/]+)\.(jpg|jpeg|webp|png)$/i);

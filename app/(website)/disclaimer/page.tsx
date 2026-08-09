@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { AlertTriangle, Mail, Globe, Lock, ShieldCheck, Scale, Info, ShoppingBag, ExternalLink, Dumbbell, UserCheck, Edit } from "lucide-react";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
-export const metadata = {
-  title: "Disclaimer | Boxing Essential",
-  description: "This Disclaimer governs your use of our website and all content, articles, reviews, and external links available here.",
+export const metadata: Metadata = {
+  title: "Disclaimer",
+  description:
+    "Legal disclaimer for Boxing Essential content, product reviews, affiliate links, fitness advice, and external websites. Information is for educational use only.",
+  alternates: { canonical: `${SITE_BASE_URL}/disclaimer` },
+  openGraph: {
+    title: "Disclaimer | Boxing Essential",
+    description:
+      "Limits of liability, affiliate disclosures, and how to use boxing training and gear content on our site.",
+    url: `${SITE_BASE_URL}/disclaimer`,
+    type: "website",
+  },
 };
 
 export default function DisclaimerPage() {

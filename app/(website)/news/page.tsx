@@ -12,9 +12,17 @@ export const revalidate = 3600;
 const POSTS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
-  title: "Boxing News | Boxing Essential",
-  description: "Latest boxing results, fight announcements, world rankings, and breaking news.",
+  title: "Boxing News — Results, Rankings & Fight Announcements",
+  description:
+    "Latest boxing news: fight results, upcoming bouts, world rankings, and breaking announcements from Boxing Essential.",
   alternates: { canonical: "https://boxingessential.com/news" },
+  openGraph: {
+    title: "Boxing News | Boxing Essential",
+    description:
+      "Fight results, rankings, and breaking boxing news updated regularly.",
+    url: "https://boxingessential.com/news",
+    type: "website",
+  },
 };
 
 export default async function NewsPage({

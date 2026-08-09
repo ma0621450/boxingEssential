@@ -1,6 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
 import liveBg from "@/public/livematch.jpg";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
+
+export const metadata: Metadata = {
+  title: "Live Boxing Streams",
+  description:
+    "Watch live boxing streams and fight night coverage on Boxing Essential. Championship events, sponsored bouts, and upcoming match streaming.",
+  alternates: { canonical: `${SITE_BASE_URL}/live` },
+  openGraph: {
+    title: "Live Boxing Streams | Boxing Essential",
+    description:
+      "Stream live boxing events and fight coverage exclusively on Boxing Essential.",
+    url: `${SITE_BASE_URL}/live`,
+    type: "website",
+  },
+};
 
 export default function LivePage() {
     const isLive = false;

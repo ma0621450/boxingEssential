@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, Target } from "lucide-react";
 import { BoxingHeadlinesMarquee } from "@/components/boxing-headlines-marquee";
 import { UpcomingBouts } from "@/components/upcoming-bouts";
@@ -6,8 +7,26 @@ import { ArticleCard } from "@/components/article-card";
 import { getHomeLiveData } from "@/lib/home-live-data";
 import { serverClient } from "@/lib/sanity";
 import { getPaginatedNews, getPaginatedBlogs } from "@/lib/queries";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "Boxing Essential — Train Smarter. Fight Better. Stay Stronger.",
+  },
+  description:
+    "Expert boxing training guides, gear reviews, fight news, and live match coverage. Learn technique, pick better equipment, and follow the fight game.",
+  alternates: { canonical: SITE_BASE_URL },
+  openGraph: {
+    title: "Boxing Essential — Train Smarter. Fight Better. Stay Stronger.",
+    description:
+      "Your hub for boxing training, nutrition, gear reviews, fight news, and streaming.",
+    url: SITE_BASE_URL,
+    type: "website",
+    siteName: "Boxing Essential",
+  },
+};
 
 export default async function HomePage() {
   const { bouts, headlines } = await getHomeLiveData();

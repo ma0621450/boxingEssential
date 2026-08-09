@@ -22,13 +22,22 @@ import {
   Mail
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import type { Metadata } from "next";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
-export async function generateMetadata() {
-  return {
-    title: "About Us | Boxing Essential",
-    description: "Welcome to Boxing Essential - Your Knockout Destination for All Things Boxing!",
-  };
-}
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn who we are at Boxing Essential — mission, training philosophy, and how we help boxers choose gear, train smarter, and follow the fight game.",
+  alternates: { canonical: `${SITE_BASE_URL}/about` },
+  openGraph: {
+    title: "About Boxing Essential",
+    description:
+      "Meet Boxing Essential: expert-backed boxing training, gear guidance, and fight coverage for every level.",
+    url: `${SITE_BASE_URL}/about`,
+    type: "website",
+  },
+};
 
 export default function AboutPage() {
   const fightingStyles = [

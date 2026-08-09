@@ -25,19 +25,19 @@ export async function generateStaticParams() {
 
 const categorySeo = {
   gym: {
-    title: "Gym Training School | Boxing Essential",
+    title: "Gym Training School",
     description:
-      "Build foundational boxing strength, explosive muscle power, and full-body conditioning with fighter weights and core circuits.",
+      "Build boxing strength, explosive power, and full-body conditioning with fighter-focused weights, core circuits, and gym drills.",
   },
   boxing: {
-    title: "Boxing Training School | Boxing Essential",
+    title: "Boxing Training School",
     description:
-      "Master ring strategy, rapid footwork mechanics, snappy punch combinations, and pocket defense from elite trainers.",
+      "Master ring strategy, footwork, punch combinations, and defense with step-by-step boxing training videos and guides.",
   },
   fitness: {
-    title: "Fitness Training School | Boxing Essential",
+    title: "Fitness Training School",
     description:
-      "Get in peak boxer shape with high-intensity cardio boxing intervals, fat-burn shadowboxing circuits, and endurance exercises.",
+      "Peak boxing fitness with HIIT cardio intervals, fat-burn shadowboxing circuits, and endurance workouts for fighters.",
   },
 } as const;
 
@@ -46,14 +46,16 @@ export async function generateMetadata({ params }: PageProps) {
   if (!TRAINING_CATEGORIES.includes(category as TutorialCategory)) return {};
 
   const details = categorySeo[category as TutorialCategory];
+  const url = `https://boxingessential.com/training/${category}`;
   return {
     title: details.title,
     description: details.description,
+    alternates: { canonical: url },
     openGraph: {
-      title: details.title,
+      title: `${details.title} | Boxing Essential`,
       description: details.description,
       type: "website",
-      url: `https://boxingessential.com/training/${category}`,
+      url,
     },
   };
 }

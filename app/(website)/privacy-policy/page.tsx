@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { ShieldCheck, Mail, Globe, Lock, Cookie, UserCheck, Scale, AlertCircle, Clock, Link as LinkIcon, Edit, ShieldAlert } from "lucide-react";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
-export const metadata = {
-  title: "Privacy Policy | Boxing Essential",
-  description: "This Privacy Policy document outlines the types of personal information that is collected and recorded by Boxing Essential and how we use it.",
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Boxing Essential collects, uses, stores, and protects your personal data, including cookies, third parties, and your privacy rights.",
+  alternates: { canonical: `${SITE_BASE_URL}/privacy-policy` },
+  openGraph: {
+    title: "Privacy Policy | Boxing Essential",
+    description:
+      "Read how Boxing Essential handles personal information, cookies, and data protection.",
+    url: `${SITE_BASE_URL}/privacy-policy`,
+    type: "website",
+  },
 };
 
 export default function PrivacyPolicyPage() {

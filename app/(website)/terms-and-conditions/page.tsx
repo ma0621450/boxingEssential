@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { Scale, Mail, Globe, Lock, UserCheck, ShieldAlert, Clock, Link as LinkIcon, Edit, FileText, Ban, Zap, Info } from "lucide-react";
+import { SITE_BASE_URL } from "@/lib/sitemap-data";
 
-export const metadata = {
-  title: "Terms and Conditions | Boxing Essential",
-  description: "By accessing and using Boxing Essential website, you agree to be bound by our Terms and Conditions.",
+export const metadata: Metadata = {
+  title: "Terms and Conditions",
+  description:
+    "Terms of use for Boxing Essential: acceptable use, intellectual property, user content, third-party links, warranties, and liability limits.",
+  alternates: { canonical: `${SITE_BASE_URL}/terms-and-conditions` },
+  openGraph: {
+    title: "Terms and Conditions | Boxing Essential",
+    description:
+      "Rules for using Boxing Essential website, content, and related services.",
+    url: `${SITE_BASE_URL}/terms-and-conditions`,
+    type: "website",
+  },
 };
 
 export default function TermsPage() {

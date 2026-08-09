@@ -15,10 +15,16 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Sitemap | Boxing Essential",
+  title: "Sitemap",
   description:
-    "Browse all pages, blog posts, news articles, and training videos on Boxing Essential.",
+    "Browse every Boxing Essential page: blog posts, news, training videos, shop, and legal pages.",
   alternates: { canonical: `${SITE_BASE_URL}/sitemap` },
+  openGraph: {
+    title: "Sitemap | Boxing Essential",
+    description: "Full directory of Boxing Essential pages and articles.",
+    url: `${SITE_BASE_URL}/sitemap`,
+    type: "website",
+  },
 };
 
 function SitemapSectionBlock({ section }: { section: SitemapSection }) {

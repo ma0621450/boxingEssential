@@ -11,7 +11,9 @@ export function ArticleCard({ article, featured = false }: { article: any; featu
     : article.category?.name || "Uncategorized";
 
   const isNews = categoryName.toLowerCase() === "news";
-  const href = article.slug;
+  const href = article.slug?.startsWith("/")
+    ? article.slug
+    : `/${article.slug}`;
   const imageUrl =
     getSanityImageUrl(article.mainImage) ||
     article.featuredImage ||

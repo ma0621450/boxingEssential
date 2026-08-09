@@ -22,20 +22,29 @@ export async function generateMetadata({
 
   if (searchQuery) {
     return {
-      title: `Search: ${searchQuery} | Boxing Essential`,
-      description: `Search results for "${searchQuery}" on Boxing Essential.`,
+      title: `Search: ${searchQuery}`,
+      description: `Search results for "${searchQuery}" across Boxing Essential boxing articles and guides.`,
       alternates: { canonical: BLOG_CANONICAL },
+      robots: { index: false, follow: true },
     };
   }
 
   return {
-    title: categoryName
-      ? `${categoryName} Articles | Boxing Essential`
-      : "All Blogs | Boxing Essential",
+    title: categoryName ? `${categoryName} Articles` : "Boxing Blog — Guides, Gear & Training",
     description: categoryName
-      ? `Browse all ${categoryName} articles on Boxing Essential.`
-      : "Expert boxing content covering training, nutrition, gear, and strategy.",
+      ? `Browse ${categoryName} articles on Boxing Essential — tips, reviews, and training advice.`
+      : "Expert boxing articles on training, nutrition, gear reviews, fight strategy, and live match coverage.",
     alternates: { canonical: BLOG_CANONICAL },
+    openGraph: {
+      title: categoryName
+        ? `${categoryName} Articles | Boxing Essential`
+        : "Boxing Blog | Boxing Essential",
+      description: categoryName
+        ? `All ${categoryName} posts from Boxing Essential.`
+        : "Training, nutrition, gear, and strategy articles for boxers at every level.",
+      url: BLOG_CANONICAL,
+      type: "website",
+    },
   };
 }
 

@@ -13,10 +13,17 @@ import { mapProductCategories, type ProductCategory } from "@/lib/product-catego
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Shop Boxing Gear | Gloves, Bags, Shoes & More",
+  title: "Shop Boxing Gear — Gloves, Bags, Shoes & More",
   description:
     "Expert-reviewed boxing gloves, punching bags, shoes, protective gear, and supplements. Curated affiliate picks from Boxing Essential.",
   alternates: { canonical: "https://boxingessential.com/shop" },
+  openGraph: {
+    title: "Shop Boxing Gear | Boxing Essential",
+    description:
+      "Curated boxing gloves, bags, shoes, and protective gear picks reviewed by Boxing Essential.",
+    url: "https://boxingessential.com/shop",
+    type: "website",
+  },
 };
 
 export default async function ShopPage() {

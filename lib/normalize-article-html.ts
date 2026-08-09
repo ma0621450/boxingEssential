@@ -12,6 +12,14 @@ export function normalizeArticleHtml(html: string): string {
   result = result.replace(/\sstyle="[^"]*"/gi, "");
   result = result.replace(/<\/?span[^>]*>/gi, "");
 
+  // Migrated WP content often links to /slug/ — strip trailing slash so
+  // crawlers aren't continually pointed at the duplicate URL variant.
+  result = result.replace(
+    /(https?:\/\/(?:www\.)?boxingessential\.com[^"'>\s]*)\/(?=["'#?\s>])/gi,
+    "$1"
+  );
+  result = result.replace(/(href=["'])(\/[^"'>\s]+)\/(["'])/gi, "$1$2$3");
+
   return result.trim();
 }
 
