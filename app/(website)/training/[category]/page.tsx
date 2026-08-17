@@ -42,7 +42,8 @@ const categorySeo = {
 } as const;
 
 export async function generateMetadata({ params }: PageProps) {
-  const { category } = await params;
+  const { category: rawCategory } = await params;
+  const category = rawCategory.replace(/\/+$/, "");
   if (!TRAINING_CATEGORIES.includes(category as TutorialCategory)) return {};
 
   const details = categorySeo[category as TutorialCategory];
@@ -61,7 +62,8 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function Page({ params }: PageProps) {
-  const { category } = await params;
+  const { category: rawCategory } = await params;
+  const category = rawCategory.replace(/\/+$/, "");
 
   if (!TRAINING_CATEGORIES.includes(category as TutorialCategory)) {
     notFound();

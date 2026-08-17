@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SITE_ORIGIN } from "@/lib/site-url";
 
 const RESERVED_SINGLE_SEGMENTS = new Set([
   "about",
@@ -36,15 +37,38 @@ const PUBLIC_STATIC_IMAGES = new Set(
   ].map((name) => name.toLowerCase())
 );
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+function canonicalRequestOrigin(request: NextRequest): string {
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    "";
+  if (
+    host.startsWith("localhost") ||
+    host.startsWith("127.0.0.1") ||
+    host.endsWith(".vercel.app")
+  ) {
+    return request.nextUrl.origin;
+  }
+  return SITE_ORIGIN;
+}
 
-  // Prefer non-trailing-slash URLs so Google consolidates duplicates
-  if (pathname.length > 1 && pathname.endsWith("/")) {
-    const destination = new URL(request.url);
-    destination.pathname = pathname.replace(/\/+$/, "") || "/";
-    // Absolute Location helps crawlers merge slash vs non-slash variants
-    return NextResponse.redirect(destination.toString(), 308);
+export function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    "";
+  const origin = canonicalRequestOrigin(request);
+  const cleanPath =
+    pathname.length > 1 && pathname.endsWith("/")
+      ? pathname.replace(/\/+$/, "") || "/"
+      : pathname;
+  const slashFix = cleanPath !== pathname;
+  const hostFix = origin === SITE_ORIGIN && host === "www.boxingessential.com";
+
+  // One hop to https://boxingessential.com/slug (no slash, no www)
+  if (slashFix || hostFix) {
+    return NextResponse.redirect(new URL(`${origin}${cleanPath}${search}`), 308);
   }
 
   const extensionMatch = pathname.match(/^\/([^/]+)\.(jpg|jpeg|webp|png)$/i);

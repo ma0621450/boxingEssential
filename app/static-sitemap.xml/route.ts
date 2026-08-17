@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { SITE_ORIGIN } from "@/lib/site-url";
 
 export const revalidate = 3600;
 
 export async function GET() {
-  const baseUrl = "https://boxingessential.com";
+  const baseUrl = SITE_ORIGIN;
 
   const currentDate = new Date();
 

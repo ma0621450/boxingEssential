@@ -29,7 +29,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = rawSlug.replace(/\/+$/, "");
   const article = await serverClient.fetch(getPostBySlug, { slug });
 
   if (!article) return { title: "Not Found" };
@@ -59,7 +60,8 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = rawSlug.replace(/\/+$/, "");
   const article = await serverClient.fetch(getPostBySlug, { slug });
 
   if (!article) notFound();
@@ -77,7 +79,7 @@ export default async function PostPage({
   const processedHtml = article.rawHtml
     ? normalizeArticleHtml(injectHeadingIds(article.rawHtml))
     : null;
-  const shareUrl = `${SITE_BASE_URL}/${article.slug}`;
+  const shareUrl = `${SITE_BASE_URL}/${slug}`;
 
   const relatedPosts = await serverClient.fetch(getRelatedPosts, {
     category: article.category,
@@ -99,6 +101,8 @@ export default async function PostPage({
               description: article.seo?.metaDescription || article.excerpt,
               image: imageUrl,
               datePublished: dateStr,
+              url: shareUrl,
+              mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
               author: {
                 "@type": "Person",
                 name: article.author?.name || "Boxing Essential",
@@ -207,22 +211,24 @@ export default async function PostPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: article.seo?.metaTitle || article.title,
-            description: article.seo?.metaDescription || article.excerpt,
-            image: imageUrl,
-            datePublished: dateStr,
-            author: {
-              "@type": "Person",
-              name: article.author?.name || "Boxing Essential",
-            },
-            publisher: {
-              "@type": "Organization",
-              name: "Boxing Essential",
-            },
-          }),
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: article.seo?.metaTitle || article.title,
+              description: article.seo?.metaDescription || article.excerpt,
+              image: imageUrl,
+              datePublished: dateStr,
+              url: shareUrl,
+              mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
+              author: {
+                "@type": "Person",
+                name: article.author?.name || "Boxing Essential",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "Boxing Essential",
+              },
+            }),
         }}
       />
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity";
 import { sitemapImageXml } from "@/lib/site-image-url";
 import { groq } from "next-sanity";
+import { SITE_ORIGIN, toSitePath } from "@/lib/site-url";
 
 export const revalidate = 3600;
 
@@ -16,7 +17,7 @@ const getAllPostSlugsForSitemap = groq`
 `;
 
 export async function GET() {
-  const baseUrl = "https://boxingessential.com";
+  const baseUrl = SITE_ORIGIN;
 
   let posts: {
     slug: string;
@@ -49,7 +50,7 @@ ${posts
   .map(
     (post) => `
     <url>
-        <loc>${baseUrl}/${post.slug}</loc>
+        <loc>${baseUrl}${toSitePath(post.slug)}</loc>
         <lastmod>${new Date(
           post._updatedAt || post.publishedAt || currentDate
         ).toISOString()}</lastmod>

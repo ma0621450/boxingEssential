@@ -2,6 +2,8 @@ import { PortableText as BasePortableText } from '@portabletext/react';
 import { getSanityImageUrl } from '@/lib/sanity';
 import Image from 'next/image';
 import { slugifyHeading } from '@/lib/extract-toc';
+import { canonicalizeHref } from '@/lib/site-url';
+import { normalizeArticleHtml } from '@/lib/normalize-article-html';
 
 const components = {
   block: {
@@ -50,7 +52,7 @@ const components = {
       return (
         <div
           className="my-10 overflow-x-auto"
-          dangerouslySetInnerHTML={{ __html: value.code }}
+          dangerouslySetInnerHTML={{ __html: normalizeArticleHtml(value.code || "") }}
         />
       );
     },
@@ -58,9 +60,10 @@ const components = {
   marks: {
     strong: ({ children }: any) => <strong className="text-white font-bold">{children}</strong>,
     link: ({ children, value }: any) => {
-      const rel = !value.href.startsWith('/') ? 'noreferrer noopener' : undefined;
+      const href = canonicalizeHref(value.href);
+      const rel = !href.startsWith('/') ? 'noreferrer noopener' : undefined;
       return (
-        <a href={value.href} rel={rel} className="text-red-500 hover:underline transition-all">
+        <a href={href} rel={rel} className="text-red-500 hover:underline transition-all">
           {children}
         </a>
       );

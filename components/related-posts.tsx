@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
 import { getSanityImageUrl } from "@/lib/sanity";
+import { toSitePath } from "@/lib/site-url";
 
 type RelatedPost = {
   slug: string;
@@ -29,7 +30,7 @@ export function RelatedPosts({ posts }: { posts: RelatedPost[] }) {
             PLACEHOLDER_IMAGE;
 
           return (
-            <Link key={article.slug} href={`/${article.slug}`} className="group block">
+            <Link key={article.slug} href={toSitePath(article.slug)} className="group block">
               <article className="overflow-hidden rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-all duration-300 h-full flex flex-col">
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image

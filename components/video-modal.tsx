@@ -14,6 +14,7 @@ import {
 import type { Tutorial } from "@/lib/tutorial";
 import Image from "next/image";
 import Link from "next/link";
+import { toSitePath } from "@/lib/site-url";
 
 type FeaturedProduct = {
   _id: string;
@@ -262,7 +263,7 @@ export function VideoModal({
 
             <div className="border-t border-border/60 pt-6">
               <Link
-                href={`/videos/${video.slug}`}
+                href={toSitePath(`/videos/${video.slug}`)}
                 className="block w-full text-center px-4 py-2.5 bg-zinc-800 text-white hover:bg-zinc-700 rounded-xl text-sm font-bold transition"
               >
                 Open Full Lesson Page

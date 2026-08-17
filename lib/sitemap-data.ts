@@ -1,6 +1,7 @@
 import { groq } from "next-sanity";
+import { SITE_ORIGIN, toSitePath } from "./site-url";
 
-export const SITE_BASE_URL = "https://boxingessential.com";
+export const SITE_BASE_URL = SITE_ORIGIN;
 
 export type SitemapLink = {
   href: string;
@@ -112,7 +113,7 @@ export function buildDynamicSections(
       title: "News Articles",
       links: dedupeLinks(
         news.map((post) => ({
-          href: `/${post.slug}`,
+          href: toSitePath(post.slug),
           label: post.title,
         }))
       ),
@@ -125,7 +126,7 @@ export function buildDynamicSections(
       title: "Blog Articles",
       links: dedupeLinks(
         blogs.map((post) => ({
-          href: `/${post.slug}`,
+          href: toSitePath(post.slug),
           label: post.title,
         }))
       ),
@@ -138,7 +139,7 @@ export function buildDynamicSections(
       title: "Training Videos",
       links: dedupeLinks(
         uniqueTutorials.map((tutorial) => ({
-          href: `/videos/${tutorial.slug}`,
+          href: toSitePath(`/videos/${tutorial.slug}`),
           label: tutorial.title,
         }))
       ),

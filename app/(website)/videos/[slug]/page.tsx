@@ -20,6 +20,7 @@ import {
 } from "@/lib/tutorial";
 import { withYoutubeDuration, withYoutubeDurationList } from "@/lib/enrich-tutorial";
 import { PLACEHOLDER_IMAGE } from "@/lib/images";
+import { SITE_ORIGIN, toSitePath } from "@/lib/site-url";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { TrainingRequestForm } from "@/components/training-request-form";
 import { ArticleCard } from "@/components/article-card";
@@ -33,8 +34,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-const SITE_URL = "https://boxingessential.com";
-
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -45,7 +44,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = rawSlug.replace(/\/+$/, "");
   const raw = await serverClient.fetch(getTutorialBySlug, { slug });
   if (!raw) return {};
 
@@ -68,19 +68,20 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title,
     description,
-    alternates: { canonical: `${SITE_URL}/videos/${slug}` },
+    alternates: { canonical: `${SITE_ORIGIN}/videos/${slug}` },
     openGraph: {
       title,
       description,
       type: "video.other",
-      url: `${SITE_URL}/videos/${slug}`,
+      url: `${SITE_ORIGIN}/videos/${slug}`,
       images: [{ url: ogImage, width: 1200, height: 675, alt: tutorial.title }],
     },
   };
 }
 
 export default async function VideoDetailPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = rawSlug.replace(/\/+$/, "");
   const rawFetched = await serverClient.fetch(getTutorialBySlug, { slug });
   if (!rawFetched) notFound();
   const raw = await withYoutubeDuration(rawFetched);
@@ -115,7 +116,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
   ]);
 
   const categoryTitle = getCategoryLabel(video.category);
-  const shareUrl = `${SITE_URL}/videos/${slug}`;
+  const shareUrl = `${SITE_ORIGIN}/videos/${slug}`;
 
   const videoSchema = {
     "@context": "https://schema.org",
@@ -128,6 +129,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
     contentUrl: video.youtubeUrl,
     embedUrl: video.embedUrl,
     url: shareUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
     isPartOf: {
       "@type": "Course",
       name: `${categoryTitle} School`,
@@ -144,12 +146,12 @@ export default async function VideoDetailPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_ORIGIN },
       {
         "@type": "ListItem",
         position: 2,
         name: categoryTitle,
-        item: `${SITE_URL}/training/${video.category}`,
+        item: `${SITE_ORIGIN}/training/${video.category}`,
       },
       { "@type": "ListItem", position: 3, name: video.title, item: shareUrl },
     ],
@@ -219,7 +221,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             <div className="flex items-center justify-between bg-card border border-border/50 rounded-2xl p-5 shadow-sm">
               {prevVideo ? (
                 <Link
-                  href={`/videos/${prevVideo.slug}`}
+                  href={toSitePath(`/videos/${prevVideo.slug}`)}
                   className="flex items-center gap-2 group text-sm font-semibold hover:text-red-600 transition-colors"
                 >
                   <ChevronLeft className="h-5 w-5 border border-border rounded-full p-0.5 group-hover:border-red-600" />
@@ -243,7 +245,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
               {nextVideo ? (
                 <Link
-                  href={`/videos/${nextVideo.slug}`}
+                  href={toSitePath(`/videos/${nextVideo.slug}`)}
                   className="flex items-center gap-2 group text-sm font-semibold hover:text-red-600 transition-colors"
                 >
                   <div className="text-right hidden sm:block">
@@ -272,7 +274,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 {relatedVideos.map((rv) => (
                   <Link
                     key={rv.slug}
-                    href={`/videos/${rv.slug}`}
+                    href={toSitePath(`/videos/${rv.slug}`)}
                     className="flex gap-3 group text-left p-1 rounded-lg hover:bg-secondary/40 transition-colors"
                   >
                     <div className="relative w-20 aspect-video rounded overflow-hidden shrink-0 bg-black">
