@@ -133,7 +133,11 @@ export default async function VideoDetailPage({ params }: PageProps) {
     isPartOf: {
       "@type": "Course",
       name: `${categoryTitle} School`,
-      provider: { "@type": "Organization", name: "Boxing Essential" },
+      provider: {
+        "@type": "Organization",
+        name: "Boxing Essential",
+        logo: `${SITE_ORIGIN}/boxinglogo.png`,
+      },
     },
     hasPart: {
       "@type": "Clip",

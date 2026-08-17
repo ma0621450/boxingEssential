@@ -110,6 +110,10 @@ export default async function PostPage({
               publisher: {
                 "@type": "Organization",
                 name: "Boxing Essential",
+                logo: {
+                  "@type": "ImageObject",
+                  url: `${SITE_BASE_URL}/boxinglogo.png`,
+                },
               },
             }),
           }}
@@ -227,10 +231,14 @@ export default async function PostPage({
               publisher: {
                 "@type": "Organization",
                 name: "Boxing Essential",
+                logo: {
+                  "@type": "ImageObject",
+                  url: `${SITE_BASE_URL}/boxinglogo.png`,
+                },
               },
             }),
-        }}
-      />
+          }}
+        />
 
       {article.faqs && article.faqs.length > 0 && (
         <script

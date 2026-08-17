@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, Dumbbell, Trophy, HeartPulse } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logo from "@/public/logo.png"
+import logo from "@/public/boxinglogo.png"
 import Image from "next/image";
 
 function isLinkActive(pathname: string, href: string) {
@@ -84,7 +84,14 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Image src={logo} alt="Logo" width={70} height={70} priority={true} />
+            <Image
+              src={logo}
+              alt="Boxing Essential"
+              width={117}
+              height={70}
+              className="h-14 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}

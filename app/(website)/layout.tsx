@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: [{ url: "/boxinglogo.png", type: "image/png" }],
+    apple: "/boxinglogo.png",
+    shortcut: "/boxinglogo.png",
+  },
 };
 
 export default function RootLayout({

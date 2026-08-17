@@ -28,6 +28,7 @@ const PUBLIC_STATIC_IMAGES = new Set(
     "counterPuncher.jpg",
     "livematch.jpg",
     "logo.png",
+    "boxinglogo.png",
     "mAli.png",
     "mtyson.jpg",
     "outBoxer.jpg",

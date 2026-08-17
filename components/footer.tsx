@@ -1,5 +1,5 @@
 import Link from "next/link";
-import logo from "@/public/logo.png"
+import logo from "@/public/boxinglogo.png"
 import Image from "next/image";
 
 export function Footer() {
@@ -10,7 +10,13 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <Image src={logo} alt="Logo" width={70} height={70} />
+              <Image
+                src={logo}
+                alt="Boxing Essential"
+                width={117}
+                height={70}
+                className="h-14 w-auto object-contain"
+              />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Boxing Essential delivers high quality boxing gear and expert support, tailored to your needs reach out today to power your journey.
